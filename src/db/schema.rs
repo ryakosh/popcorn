@@ -1,25 +1,25 @@
 table! {
     artists (id) {
         id -> Int4,
-        first_name -> Nullable<Varchar>,
-        last_name -> Nullable<Varchar>,
-        gender -> Nullable<Varchar>,
+        first_name -> Varchar,
+        last_name -> Varchar,
+        gender -> Varchar,
     }
 }
 
 table! {
     directors (id) {
         id -> Int4,
-        first_name -> Nullable<Varchar>,
-        last_name -> Nullable<Varchar>,
-        gender -> Nullable<Varchar>,
+        first_name -> Varchar,
+        last_name -> Varchar,
+        gender -> Varchar,
     }
 }
 
 table! {
     movies (id) {
         id -> Int4,
-        title -> Nullable<Varchar>,
+        title -> Varchar,
         description -> Nullable<Varchar>,
         genres -> Nullable<Array<Text>>,
         languages -> Nullable<Array<Text>>,
@@ -43,9 +43,9 @@ table! {
 table! {
     writers (id) {
         id -> Int4,
-        first_name -> Nullable<Varchar>,
-        last_name -> Nullable<Varchar>,
-        gender -> Nullable<Varchar>,
+        first_name -> Varchar,
+        last_name -> Varchar,
+        gender -> Varchar,
     }
 }
 

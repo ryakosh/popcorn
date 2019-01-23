@@ -1,6 +1,6 @@
 CREATE TABLE movies (
   id SERIAL PRIMARY KEY,
-  title VARCHAR,
+  title VARCHAR NOT NULL,
   description VARCHAR,
   genres TEXT[],
   languages TEXT[],

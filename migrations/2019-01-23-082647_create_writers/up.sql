@@ -1,6 +1,6 @@
 CREATE TABLE writers(
   id SERIAL PRIMARY KEY,
-  first_name VARCHAR,
-  last_name VARCHAR,
-  gender VARCHAR(1)
+  first_name VARCHAR NOT NULL,
+  last_name VARCHAR NOT NULL,
+  gender VARCHAR(1) NOT NULL
 );
