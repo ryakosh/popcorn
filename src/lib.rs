@@ -6,4 +6,8 @@ mod tests {
     }
 }
 
+#[macro_use] extern crate diesel;
+extern crate chrono;
+
 pub mod db;
+pub mod error;
