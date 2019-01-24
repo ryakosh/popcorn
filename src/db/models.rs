@@ -3,10 +3,10 @@ use super::schema::users;
 
 #[table_name = "users"]
 #[derive(Queryable, Insertable)]
-pub struct User<'u> {
-  pub id: &'u str,
-  pub email: &'u str,
-  pub pwd: &'u str,
+pub struct User {
+  pub id: String,
+  pub email: String,
+  pub pwd: String,
 }
 
 #[derive(Queryable)]
