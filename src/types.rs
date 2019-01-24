@@ -1,7 +1,7 @@
 use crate::consts::{RGX_UNAME, RGX_EMAIL, RGX_PWD};
 use crate::error::*;
 
-struct CandidateUser<'c> {
+pub struct CandidateUser<'c> {
   uname: &'c str,
   pwd: &'c str,
   email: &'c str,
@@ -28,4 +28,8 @@ impl<'c> CandidateUser<'c> {
       Err(errors)
     }
   }
+
+  pub fn uname(&self) -> &'c str { self.uname }
+  pub fn email(&self) -> &'c str { self.email }
+  pub fn pwd(&self) -> &'c str { self.pwd }
 }
