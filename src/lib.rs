@@ -1,3 +1,5 @@
+#![feature(uniform_paths)]
+
 #[cfg(test)]
 mod tests {
     #[test]
