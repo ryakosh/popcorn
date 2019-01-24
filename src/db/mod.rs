@@ -1,6 +1,4 @@
-use super::error::Error;
-
-type Errors = Vec<Error>;
+use crate::error::Error;
 
 mod schema;
 mod models;
