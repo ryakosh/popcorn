@@ -3,7 +3,7 @@ mod models;
 
 use std::env::var;
 use crate::diesel::*;
-use crate::types::CandidateUser;
+use crate::types::data::SignupData;
 use crate::error::*;
 use schema::users::dsl::*;
 use models::{User};
@@ -13,18 +13,18 @@ fn connect(conn_str: &str) -> PgConnection {
     .expect(&format!("Error connecting to: {}", conn_str))
 }
 
-pub fn signup(candidate: &CandidateUser) -> Result<User, Errors> {
+pub fn signup(singup_data: &SignupData) -> Result<User, Errors> {
   let conn = connect(&var("DATABASE_URL")
     .expect("Can't find DATABASE_URL environment variable"));
-  let user: Result<User, _> = users.find(candidate.uname().to_lowercase()).first(&conn);
+  let user: Result<User, _> = users.find(singup_data.uname().to_lowercase()).first(&conn);
 
   if let Ok(_) = user {
     Err(vec![Error::UnameTaken])
   } else {
     let new_user = User {
-      id: candidate.uname().to_string(),
-      email: candidate.email().to_string(),
-      pwd: candidate.pwd().to_string(),
+      id: singup_data.uname().to_string(),
+      email: singup_data.email().to_string(),
+      pwd: singup_data.pwd().to_string(),
     };
 
     Ok(insert_into(users)
