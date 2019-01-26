@@ -1,10 +1,19 @@
 use crate::consts::{RGX_UNAME, RGX_EMAIL, RGX_PWD};
 use crate::error::*;
+use std::time::{Duration, SystemTime};
 
 pub struct CandidateUser<'c> {
   uname: &'c str,
   pwd: &'c str,
   email: &'c str,
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct Claims {
+  iss: String,
+  iat: u64,
+  sub: String,
+  exp: u64,
 }
 
 impl<'c> CandidateUser<'c> {
@@ -32,4 +41,27 @@ impl<'c> CandidateUser<'c> {
   pub fn uname(&self) -> &'c str { self.uname }
   pub fn email(&self) -> &'c str { self.email }
   pub fn pwd(&self) -> &'c str { self.pwd }
+}
+
+impl Claims {
+  pub fn new(sub: String) -> Claims {
+    Claims { 
+      iss: "Popcorn".to_string(),
+      iat: Self::gen_iat(),
+      exp: Self::gen_exp(),
+      sub,
+    }
+  }
+
+  fn gen_exp() -> u64 {
+    let now = SystemTime::now().duration_since(SystemTime::UNIX_EPOCH)
+      .expect("SystemTime before UNIX EPOCH");
+    (now + Duration::from_secs(3 * 3600)).as_secs()
+  }
+
+  fn gen_iat() -> u64 {
+    SystemTime::now().duration_since(SystemTime::UNIX_EPOCH)
+      .expect("SystemTime before UNIX EPOCH")
+      .as_secs()
+  }
 }
