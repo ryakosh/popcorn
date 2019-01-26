@@ -13,6 +13,7 @@ mod tests {
 #[macro_use] extern crate serde_derive;
 extern crate chrono;
 extern crate regex;
+extern crate jsonwebtoken;
 
 pub mod db;
 pub mod error;
