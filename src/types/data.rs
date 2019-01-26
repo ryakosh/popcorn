@@ -7,6 +7,11 @@ pub struct SignupData<'s> {
   email: &'s str,
 }
 
+pub struct SigninData<'s> {
+  uname: &'s str,
+  pwd: &'s str,
+}
+
 impl<'s> SignupData<'s> {
   fn new(uname: &'s str,
          pwd: &'s str,
@@ -31,5 +36,26 @@ impl<'s> SignupData<'s> {
 
   pub fn uname(&self) -> &'s str { self.uname }
   pub fn email(&self) -> &'s str { self.email }
+  pub fn pwd(&self) -> &'s str { self.pwd }
+}
+
+impl<'s> SigninData<'s> {
+  fn new(uname: &'s str, pwd: &'s str) -> Result<Self, Errors> {
+    let is_uname = RGX_UNAME.is_match(uname);
+    let is_pwd   = RGX_PWD.is_match(pwd);
+
+    if is_uname && is_pwd {
+      Ok(SigninData { uname, pwd })
+    } else {
+      let mut errors = Vec::new();
+
+      if let false = is_uname { errors.push(Error::UnameInvalid) }
+      if let false = is_pwd { errors.push(Error::PwdInvalid) }
+      
+      Err(errors)
+    }
+  }
+
+  pub fn uname(&self) -> &'s str { self.uname }
   pub fn pwd(&self) -> &'s str { self.pwd }
 }
