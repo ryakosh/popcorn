@@ -7,6 +7,7 @@ use crate::types::Claims;
 use crate::types::data::{SignupData, SigninData};
 use crate::error::*;
 use crate::jsonwebtoken::{encode, Header};
+use crate::config::config;
 use schema::users::dsl::*;
 use models::{User};
 
@@ -43,8 +44,7 @@ pub fn signin(signin_data: &SigninData) -> Result<String, Errors> {
     users.find(signin_data.uname().to_lowercase()).first(&conn);
 
   if let Ok(user) = result {
-    // TODO: Change secret to something more secure
-    Ok(encode(&Header::default(), &Claims::new(user.id), "secret".as_ref())
+    Ok(encode(&Header::default(), &Claims::new(user.id), &config.jwt.secret.as_ref())
       .expect("Error encoding token"))
   } else {
     Err(vec![Error::UserNFound])
