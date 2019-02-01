@@ -14,8 +14,10 @@ mod tests {
 extern crate chrono;
 extern crate regex;
 extern crate jsonwebtoken;
+extern crate toml;
 
 pub mod db;
 pub mod error;
 pub mod types;
 pub mod consts;
+pub mod config;
