@@ -1,3 +1,4 @@
+#[derive(Serialize)]
 pub enum Error {
   UserNFound,
 
