@@ -14,3 +14,8 @@ chrono = "0.4.6"
 regex = "1.1.0"
 lazy_static = "1.2.0"
 toml = "0.4.10"
+
+[dependencies.rocket_contrib]
+version = "0.4.0"
+default-features = false
+features = ["json"]
