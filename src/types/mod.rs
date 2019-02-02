@@ -1,4 +1,6 @@
 use std::time::{Duration, SystemTime};
+use crate::serde::Serialize;
+use crate::error::Errors;
 
 pub mod data;
 
@@ -8,6 +10,12 @@ pub struct Claims {
   iat: u64,
   sub: String,
   exp: u64,
+}
+
+#[derive(Serialize)]
+pub struct Response<T: Serialize> {
+  pub payload: Option<T>,
+  pub errors: Option<Errors>,
 }
 
 impl Claims {
@@ -30,5 +38,28 @@ impl Claims {
     SystemTime::now().duration_since(SystemTime::UNIX_EPOCH)
       .expect("SystemTime before UNIX EPOCH")
       .as_secs()
+  }
+}
+
+impl<T: Serialize> Response<T> {
+  pub fn new() -> Self {
+    Response {
+      payload: None,
+      errors: None,
+    }
+  }
+
+  pub fn with_payload(payload: T) -> Self {
+    Response {
+      payload: Some(payload),
+      errors: None,
+    }
+  }
+
+  pub fn with_errors(errors: Errors) -> Self {
+    Response {
+      payload: None,
+      errors: Some(errors),
+    }
   }
 }
