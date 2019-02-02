@@ -1,12 +1,14 @@
 use crate::consts::{RGX_UNAME, RGX_EMAIL, RGX_PWD};
 use crate::error::*;
 
+#[derive(Deserialize)]
 pub struct SignupData<'s> {
   uname: &'s str,
   pwd: &'s str,
   email: &'s str,
 }
 
+#[derive(Deserialize)]
 pub struct SigninData<'s> {
   uname: &'s str,
   pwd: &'s str,
