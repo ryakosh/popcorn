@@ -2,7 +2,7 @@ use crate::chrono::NaiveDate;
 use super::schema::users;
 
 #[table_name = "users"]
-#[derive(Queryable, Insertable)]
+#[derive(Queryable, Insertable, Serialize)]
 pub struct User {
   pub id: String,
   pub email: String,
