@@ -15,6 +15,7 @@ extern crate chrono;
 extern crate regex;
 extern crate jsonwebtoken;
 extern crate toml;
+extern crate serde;
 
 pub mod db;
 pub mod error;
