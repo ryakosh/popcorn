@@ -11,7 +11,7 @@ mod tests {
   use super::*;
 
   #[test]
-  fn email_rgx_is_valid() {
+  fn rgx_email_is_valid() {
     assert!(RGX_EMAIL.is_match("example@example.com"));
     assert!(RGX_EMAIL.is_match("g@google.com"));
     assert!(RGX_EMAIL.is_match("info@domain.org"));
@@ -23,7 +23,7 @@ mod tests {
   }
 
   #[test]
-  fn uname_rgx_is_valid() {
+  fn rgx_uname_is_valid() {
     assert!(RGX_UNAME.is_match("example"));
     assert!(RGX_UNAME.is_match("e"));
     assert!(RGX_UNAME.is_match("ex-_"));
@@ -36,7 +36,7 @@ mod tests {
   }
 
   #[test]
-  fn pwd_rgx_is_valid() {
+  fn rgx_pwd_is_valid() {
     assert!(RGX_PWD.is_match("example123"));
     assert!(RGX_PWD.is_match("@2password2@"));
     assert!(RGX_PWD.is_match("password"));
