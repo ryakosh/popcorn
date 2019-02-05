@@ -63,3 +63,28 @@ impl<T: Serialize> Response<T> {
     }
   }
 }
+
+#[cfg(test)]
+mod tests {
+  use super::*;
+
+  #[test]
+  fn claims_gen_exp_is_valid() {
+    let now = SystemTime::now().duration_since(SystemTime::UNIX_EPOCH)
+      .expect("SystemTime before UNIX EPOCH")
+      .as_secs();
+    let exp = Claims::gen_exp();
+
+    assert!(exp > now);
+  }
+
+  #[test]
+  fn claims_gen_iat_is_valid() {
+    let now = SystemTime::now().duration_since(SystemTime::UNIX_EPOCH)
+      .expect("SystemTime before UNIX EPOCH")
+      .as_secs();
+    let iat = Claims::gen_iat();
+
+    assert!(iat == now);
+  }
+}
