@@ -17,7 +17,7 @@ pub struct SigninData<'s> {
 impl<'s> SignupData<'s> {
   fn new(uname: &'s str,
          pwd: &'s str,
-         email: &'s str) -> Result<SignupData<'s>, Errors> {
+         email: &'s str) -> Result<Self, Errors> {
     
     let is_uname = RGX_UNAME.is_match(uname);
     let is_pwd   = RGX_PWD.is_match(pwd);
@@ -76,9 +76,24 @@ mod tests {
 
     let data = SignupData::new("uname", "pass", "example@example");
     if let Err(errors) = data {
-      assert_eq!(errors, vec![Error::PwdInvalid, Error::EmailInvalid]);
+      assert_eq!(errors, &[Error::PwdInvalid, Error::EmailInvalid]);
     } else {
       panic!("SignupData should return Errors");
+    }
+  }
+
+  #[test]
+  fn signindata_new_is_valid() {
+    let data = SigninData::new("uname", "password")
+      .expect("Error instantiating SigninData");
+    assert_eq!(data.uname, "uname");
+    assert_eq!(data.pwd, "password");
+
+    let data = SigninData::new("uname", "pass");
+    if let Err(errors) = data {
+      assert_eq!(errors, &[Error::PwdInvalid]);
+    } else {
+      panic!("SigninData should return Errors");
     }
   }
 }
