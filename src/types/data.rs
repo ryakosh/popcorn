@@ -61,3 +61,24 @@ impl<'s> SigninData<'s> {
   pub fn uname(&self) -> &'s str { self.uname }
   pub fn pwd(&self) -> &'s str { self.pwd }
 }
+
+#[cfg(test)]
+mod tests {
+  use super::*;
+
+  #[test]
+  fn signupdata_new_is_valid() {
+    let data = SignupData::new("uname", "password", "example@example.com")
+      .expect("Error instantiating SignupData");
+    assert_eq!(data.uname, "uname");
+    assert_eq!(data.pwd, "password");
+    assert_eq!(data.email, "example@example.com");
+
+    let data = SignupData::new("uname", "pass", "example@example");
+    if let Err(errors) = data {
+      assert_eq!(errors, vec![Error::PwdInvalid, Error::EmailInvalid]);
+    } else {
+      panic!("SignupData should return Errors");
+    }
+  }
+}
