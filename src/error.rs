@@ -1,4 +1,4 @@
-#[derive(Serialize)]
+#[derive(Serialize, Debug, PartialEq)]
 pub enum Error {
   UserNFound,
 
