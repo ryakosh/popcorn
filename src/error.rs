@@ -12,6 +12,9 @@ pub enum Error {
 
   PwdInvalid,
   PwdRequired,
+
+  LimitInvalid,
+  PageInvalid,
 }
 
 pub type Errors = Vec<Error>;
