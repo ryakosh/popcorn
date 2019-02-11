@@ -3,13 +3,15 @@ pub mod models;
 
 use std::env::var;
 use crate::diesel::*;
+use crate::diesel::sql_types::{Text, Integer, TinyInt};
 use crate::types::Claims;
 use crate::types::data::{SignupData, SigninData};
+use crate::types::query::MoviesQuery;
 use crate::error::*;
 use crate::jsonwebtoken::{encode, Header};
 use crate::config::config;
 use schema::users::dsl::*;
-use models::{User};
+use models::{User, Movie};
 
 fn connect(conn_str: &str) -> PgConnection {
   PgConnection::establish(conn_str)
@@ -49,4 +51,25 @@ pub fn signin(signin_data: &SigninData) -> Result<String, Errors> {
   } else {
     Err(vec![Error::UserNFound])
   }
+}
+
+pub fn movies(movies_query: &MoviesQuery) -> Vec<Movie> {
+  let conn = connect(&var("DATABASE_URL")
+    .expect("Can't find DATABASE_URL environment variable"));
+
+  let search = if let Some(search) = movies_query.search() {
+    search
+  } else {
+    ""
+  };
+  let limit = movies_query.limit().unwrap_or(10);
+  let page = movies_query.page().unwrap_or(1);
+
+  sql_query(include_str!("raw/movies.sql"))
+    .bind::<Text, _>(search.clone())
+    .bind::<Text, _>(search)
+    .bind::<Integer, _>(limit)
+    .bind::<Integer, _>((page * limit) - limit)
+    .load(&conn)
+    .expect("Error executing query")
 }
