@@ -3,6 +3,7 @@ use crate::serde::Serialize;
 use crate::error::Errors;
 
 pub mod data;
+pub mod query;
 
 #[derive(Serialize, Deserialize)]
 pub struct Claims {
