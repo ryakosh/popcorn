@@ -1,5 +1,5 @@
 use crate::chrono::NaiveDate;
-use super::schema::users;
+use super::schema::{users, movies};
 
 #[table_name = "users"]
 #[derive(Queryable, Insertable, Serialize)]
@@ -33,17 +33,18 @@ pub struct Writer<'w> {
   pub gender: &'w str,
 }
 
-#[derive(Queryable)]
-pub struct Movie<'m> {
+#[table_name = "movies"]
+#[derive(Queryable, QueryableByName)]
+pub struct Movie {
   id: i32,
-  title: &'m str,
-  description: &'m str,
-  genres: Vec<&'m str>,
-  languages: Vec<&'m str>,
-  release_country: &'m str,
-  release_date: NaiveDate,
-  duration: i16,
-  directors: Vec<i32>,
-  wirters: Vec<i32>,
-  stars: Vec<i32>,
+  title: String,
+  description: Option<String>,
+  genres: Option<Vec<String>>,
+  languages: Option<Vec<String>>,
+  release_country: Option<String>,
+  release_date: Option<NaiveDate>,
+  duration: Option<i16>,
+  directors: Option<Vec<i32>>,
+  writers: Option<Vec<i32>>,
+  stars: Option<Vec<i32>>,
 }
