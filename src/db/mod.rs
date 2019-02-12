@@ -11,7 +11,7 @@ use crate::error::*;
 use crate::jsonwebtoken::{encode, Header};
 use crate::config::config;
 use schema::users::dsl::*;
-use models::{User, Movie};
+use models::{User, MovieCompact};
 
 fn connect(conn_str: &str) -> PgConnection {
   PgConnection::establish(conn_str)
@@ -53,7 +53,7 @@ pub fn signin(signin_data: &SigninData) -> Result<String, Errors> {
   }
 }
 
-pub fn movies(movies_query: &MoviesQuery) -> Vec<Movie> {
+pub fn movies(movies_query: &MoviesQuery) -> Vec<MovieCompact> {
   let conn = connect(&var("DATABASE_URL")
     .expect("Can't find DATABASE_URL environment variable"));
 
@@ -65,11 +65,10 @@ pub fn movies(movies_query: &MoviesQuery) -> Vec<Movie> {
   let limit = movies_query.limit().unwrap_or(10);
   let page = movies_query.page().unwrap_or(1);
 
-  sql_query(include_str!("raw/movies.sql"))
-    .bind::<Text, _>(search.clone())
-    .bind::<Text, _>(search)
-    .bind::<Integer, _>(limit)
-    .bind::<Integer, _>((page * limit) - limit)
+  let query = format!(include_str!("raw/movies.sql"),
+    search, limit, (page * limit) - limit)
+
+  sql_query(query)
     .load(&conn)
     .expect("Error executing query")
 }
