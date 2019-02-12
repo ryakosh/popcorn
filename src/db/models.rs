@@ -33,8 +33,7 @@ pub struct Writer<'w> {
   pub gender: &'w str,
 }
 
-#[table_name = "movies"]
-#[derive(Queryable, QueryableByName)]
+#[derive(Queryable)]
 pub struct Movie {
   id: i32,
   title: String,
@@ -47,4 +46,12 @@ pub struct Movie {
   directors: Option<Vec<i32>>,
   writers: Option<Vec<i32>>,
   stars: Option<Vec<i32>>,
+}
+
+#[table_name = "movies"]
+#[derive(QueryableByName, Serialize)]
+pub struct MovieCompact {
+  id: i32,
+  title: String,
+  description: Option<String>,
 }
