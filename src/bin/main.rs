@@ -5,5 +5,9 @@
 mod routes;
 
 fn main() {
-  rocket::ignite().mount("/popcorn", routes![routes::signup]).launch();
+  rocket
+  ::ignite()
+  .mount("/popcorn",
+    routes![routes::signup, routes::movies])
+  .launch();
 }
