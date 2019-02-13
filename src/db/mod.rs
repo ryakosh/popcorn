@@ -18,12 +18,15 @@ fn connect(conn_str: &str) -> PgConnection {
     .expect(&format!("Error connecting to: {}", conn_str))
 }
 
-pub fn signup(singup_data: &SignupData) -> Result<User, Errors> {
-  use schema::users::dsl::*;
+pub fn signup(singup_data: &SignupData)
+  -> Result<(), Errors> {
+
+  use schema::users;
 
   let conn = connect(&var("DATABASE_URL")
     .expect("Can't find DATABASE_URL environment variable"));
-  let user: Result<User, _> = users.find(singup_data.uname().to_lowercase()).first(&conn);
+  let user: Result<User, _> =
+    users::table.find(singup_data.uname().to_lowercase()).first(&conn);
 
   if let Ok(_) = user {
     Err(vec![Error::UnameTaken])
@@ -34,20 +37,22 @@ pub fn signup(singup_data: &SignupData) -> Result<User, Errors> {
       pwd: singup_data.pwd().to_string(),
     };
 
-    Ok(diesel::insert_into(users)
+    diesel::insert_into(users::table)
       .values(&new_user)
-      .get_result(&conn)
-      .expect("Error creating a user"))
+      .execute(&conn)
+      .expect("Error creating a user");
+    
+    Ok(())
   }
 }
 
 pub fn signin(signin_data: &SigninData) -> Result<String, Errors> {
-  use schema::users::dsl::*;
+  use schema::users;
 
   let conn = connect(&var("DATABASE_URL")
     .expect("Can't find DATABASE_URL environment variable"));
   let result: Result<User, _> = 
-    users.find(signin_data.uname().to_lowercase()).first(&conn);
+    users::table.find(signin_data.uname().to_lowercase()).first(&conn);
 
   if let Ok(user) = result {
     Ok(encode(&Header::default(), &Claims::new(user.id), &config.jwt.secret.as_ref())

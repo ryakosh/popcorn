@@ -8,12 +8,12 @@ use popcorn::db::models::{User, MovieCompact, Movie};
 
 #[post("/auth/signup", data = "<signup_data>", format = "json")]
 pub fn signup(signup_data: Json<SignupData>)
-  -> Json<Response<User>> {
+  -> Json<Response<String>> {
 
   let result = db::signup(&signup_data.0);
 
   match result {
-    Ok(user) => Json(Response::with_payload(user)),
+    Ok(()) => Json(Response::new()),
     Err(errors) => Json(Response::with_errors(errors)),
   }
 }
