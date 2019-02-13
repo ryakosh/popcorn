@@ -1,8 +1,9 @@
 use rocket_contrib::json::Json;
 use rocket::request::Form;
 use popcorn::types::Response;
-use popcorn::types::data::SignupData;
+use popcorn::types::data::{SignupData, SigninData};
 use popcorn::types::query::MoviesQuery;
+use popcorn::types::res::SigninRes;
 use popcorn::db;
 use popcorn::db::models::{User, MovieCompact, Movie};
 
@@ -14,6 +15,18 @@ pub fn signup(signup_data: Json<SignupData>)
 
   match result {
     Ok(()) => Json(Response::new()),
+    Err(errors) => Json(Response::with_errors(errors)),
+  }
+}
+
+#[post("/auth/signin", data = "<signin_data>", format = "json")]
+pub fn signin(signin_data: Json<SigninData>)
+  -> Json<Response<SigninRes>> {
+  
+  let result = db::signin(&signin_data.0);
+
+  match result {
+    Ok(token) => Json(Response::with_payload(SigninRes { token })),
     Err(errors) => Json(Response::with_errors(errors)),
   }
 }

@@ -8,6 +8,9 @@ fn main() {
   rocket
   ::ignite()
   .mount("/popcorn",
-    routes![routes::signup, routes::movies, routes::movie])
+    routes![routes::signup,
+            routes::signin,
+            routes::movies,
+            routes::movie,])
   .launch();
 }
