@@ -2,7 +2,8 @@ mod schema;
 pub mod models;
 
 use std::env::var;
-use crate::diesel::*;
+use crate::diesel::prelude::*;
+use crate::diesel;
 use crate::diesel::sql_types::{Text, Integer, TinyInt};
 use crate::types::Claims;
 use crate::types::data::{SignupData, SigninData};
@@ -10,8 +11,7 @@ use crate::types::query::MoviesQuery;
 use crate::error::*;
 use crate::jsonwebtoken::{encode, Header};
 use crate::config::config;
-use schema::users::dsl::*;
-use models::{User, MovieCompact};
+use models::{User, MovieCompact, Movie};
 
 fn connect(conn_str: &str) -> PgConnection {
   PgConnection::establish(conn_str)
@@ -19,6 +19,8 @@ fn connect(conn_str: &str) -> PgConnection {
 }
 
 pub fn signup(singup_data: &SignupData) -> Result<User, Errors> {
+  use schema::users::dsl::*;
+
   let conn = connect(&var("DATABASE_URL")
     .expect("Can't find DATABASE_URL environment variable"));
   let user: Result<User, _> = users.find(singup_data.uname().to_lowercase()).first(&conn);
@@ -32,7 +34,7 @@ pub fn signup(singup_data: &SignupData) -> Result<User, Errors> {
       pwd: singup_data.pwd().to_string(),
     };
 
-    Ok(insert_into(users)
+    Ok(diesel::insert_into(users)
       .values(&new_user)
       .get_result(&conn)
       .expect("Error creating a user"))
@@ -40,6 +42,8 @@ pub fn signup(singup_data: &SignupData) -> Result<User, Errors> {
 }
 
 pub fn signin(signin_data: &SigninData) -> Result<String, Errors> {
+  use schema::users::dsl::*;
+
   let conn = connect(&var("DATABASE_URL")
     .expect("Can't find DATABASE_URL environment variable"));
   let result: Result<User, _> = 
@@ -66,9 +70,22 @@ pub fn movies(movies_query: &MoviesQuery) -> Vec<MovieCompact> {
   let page = movies_query.page().unwrap_or(1);
 
   let query = format!(include_str!("raw/movies.sql"),
-    search, limit, (page * limit) - limit)
+    search, limit, (page * limit) - limit);
 
-  sql_query(query)
+  diesel::sql_query(query)
     .load(&conn)
     .expect("Error executing query")
+}
+
+pub fn movie(id: i32) -> Result<Movie, Errors> {
+  use schema::movies;
+
+  let conn = connect(&var("DATABASE_URL")
+    .expect("Can't find DATABASE_URL environment variable"));
+
+  let movie = movies::table.find(id).first(&conn);
+  match movie {
+    Ok(movie) => Ok(movie),
+    Err(_) => Err(vec![Error::NotFound])
+  }
 }
