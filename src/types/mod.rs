@@ -4,6 +4,7 @@ use crate::error::Errors;
 
 pub mod data;
 pub mod query;
+pub mod res;
 
 #[derive(Serialize, Deserialize)]
 pub struct Claims {
