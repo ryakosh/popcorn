@@ -33,7 +33,7 @@ pub struct Writer<'w> {
   pub gender: &'w str,
 }
 
-#[derive(Queryable)]
+#[derive(Queryable, Serialize)]
 pub struct Movie {
   id: i32,
   title: String,
@@ -41,6 +41,7 @@ pub struct Movie {
   genres: Option<Vec<String>>,
   languages: Option<Vec<String>>,
   release_country: Option<String>,
+  #[serde(skip)]
   release_date: Option<NaiveDate>,
   duration: Option<i16>,
   directors: Option<Vec<i32>>,
