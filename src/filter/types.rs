@@ -48,3 +48,19 @@ impl<'l> Languages<'l> {
     }
   }
 }
+
+pub struct Dierectors<'d> {
+  dierectors: Vec<&'d str>,
+}
+
+impl<'d> Dierectors<'d> {
+  pub fn new(dierectors: &'d str) -> Result<Self, Error> {
+    let dierectors: Vec<&'d str> = dierectors.split("|").collect();
+
+    if dierectors.iter().all(|dierector| RGX_ALPHA.is_match(dierector)) {
+      Ok(Dierectors { dierectors })
+    } else {
+      Err(Error::FilterInvalid)
+    }
+  }
+}
