@@ -1,5 +1,5 @@
 use crate::error::Error;
-use crate::consts::RGX_ALPHA;
+use crate::consts::{RGX_ALPHA, RGX_NUM};
 
 pub struct ReleaseCountry {
   release_country: String,
@@ -57,7 +57,7 @@ impl<'d> Dierectors<'d> {
   pub fn new(dierectors: &'d str) -> Result<Self, Error> {
     let dierectors: Vec<&'d str> = dierectors.split("|").collect();
 
-    if dierectors.iter().all(|dierector| RGX_ALPHA.is_match(dierector)) {
+    if dierectors.iter().all(|dierector| RGX_NUM.is_match(dierector)) {
       Ok(Dierectors { dierectors })
     } else {
       Err(Error::FilterInvalid)
