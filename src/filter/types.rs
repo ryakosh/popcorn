@@ -80,3 +80,19 @@ impl<'w> Writers<'w> {
     }
   }
 }
+
+pub struct Artists<'a> {
+  artists: Vec<&'a str>,
+}
+
+impl<'a> Artists<'a> {
+  pub fn new(artists: &'a str) -> Result<Self, Error> {
+    let artists: Vec<&'a str> = artists.split("|").collect();
+
+    if artists.iter().all(|artist| RGX_NUM.is_match(artist)) {
+      Ok(Artists { artists })
+    } else {
+      Err(Error::FilterInvalid)
+    }
+  }
+}
