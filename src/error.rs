@@ -17,6 +17,8 @@ pub enum Error {
   PageInvalid,
 
   NotFound,
+
+  FilterInvalid,
 }
 
 pub type Errors = Vec<Error>;
