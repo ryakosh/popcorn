@@ -17,16 +17,32 @@ impl ReleaseCountry {
   }
 }
 
-pub struct Genres<'g> {
-  genres: Vec<&'g str>,
+pub struct languages<'g> {
+  languages: Vec<&'g str>,
 }
 
-impl<'g> Genres<'g> {
-  pub fn new(genres: &'g str) -> Result<Self, Error> {
-    let genres: Vec<&'g str> = genres.split("|").collect();
+impl<'g> languages<'g> {
+  pub fn new(languages: &'g str) -> Result<Self, Error> {
+    let languages: Vec<&'g str> = languages.split("|").collect();
 
-    if genres.iter().all(|genre| RGX_ALPHA.is_match(genre)) {
-      Ok(Genres { genres })
+    if languages.iter().all(|genre| RGX_ALPHA.is_match(genre)) {
+      Ok(languages { languages })
+    } else {
+      Err(Error::FilterInvalid)
+    }
+  }
+}
+
+pub struct Languages<'l> {
+  languages: Vec<&'l str>,
+}
+
+impl<'l> Languages<'l> {
+  pub fn new(languages: &'l str) -> Result<Self, Error> {
+    let languages: Vec<&'l str> = languages.split("|").collect();
+
+    if languages.iter().all(|language| RGX_ALPHA.is_match(language)) {
+      Ok(Languages { languages })
     } else {
       Err(Error::FilterInvalid)
     }
