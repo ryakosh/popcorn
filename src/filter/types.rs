@@ -64,3 +64,19 @@ impl<'d> Dierectors<'d> {
     }
   }
 }
+
+pub struct Writers<'w> {
+  writers: Vec<&'w str>,
+}
+
+impl<'w> Writers<'w> {
+  pub fn new(writers: &'w str) -> Result<Self, Error> {
+    let writers: Vec<&'w str> = writers.split("|").collect();
+
+    if writers.iter().all(|writer| RGX_NUM.is_match(writer)) {
+      Ok(Writers { writers })
+    } else {
+      Err(Error::FilterInvalid)
+    }
+  }
+}
