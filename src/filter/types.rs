@@ -63,6 +63,13 @@ impl<'l> Languages<'l> {
   }
 }
 
+impl<'l> fmt::Display for Languages<'l> {
+  fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+    let languages = self.languages.join(", ");
+    write!(f, "languages @> {{{}}}", languages)
+  }
+}
+
 pub struct Dierectors<'d> {
   dierectors: Vec<&'d str>,
 }
