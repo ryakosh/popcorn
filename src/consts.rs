@@ -5,6 +5,7 @@ lazy_static! {
   pub static ref RGX_UNAME: Regex = Regex::new(r"^[a-z0-9_-]{1,30}$").expect("Invalid username regex");
   pub static ref RGX_PWD: Regex = Regex::new(r"^.{8,50}$").expect("Invalid password regex");
   pub static ref RGX_ALPHA: Regex = Regex::new(r"^[A-Za-z]+$").expect("Invalid alpha regex");
+  pub static ref RGX_NUM: Regex = Regex::new(r"^[0-9]+$").expect("Invalid num regex");
 }
 
 #[cfg(test)]
