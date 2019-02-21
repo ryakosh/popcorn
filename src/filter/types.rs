@@ -86,6 +86,13 @@ impl<'d> Dierectors<'d> {
   }
 }
 
+impl<'d> fmt::Display for Dierectors<'d> {
+  fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+    let dierectors = self.dierectors.join(", ");
+    write!(f, "dierectors @> {{{}}}", dierectors)
+  }
+}
+
 pub struct Writers<'w> {
   writers: Vec<&'w str>,
 }
@@ -102,6 +109,13 @@ impl<'w> Writers<'w> {
   }
 }
 
+impl<'w> fmt::Display for Writers<'w> {
+  fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+    let writers = self.writers.join(", ");
+    write!(f, "writers @> {{{}}}", writers)
+  }
+}
+
 pub struct Artists<'a> {
   artists: Vec<&'a str>,
 }
@@ -115,5 +129,12 @@ impl<'a> Artists<'a> {
     } else {
       Err(Error::FilterInvalid)
     }
+  }
+}
+
+impl<'a> fmt::Display for Artists<'a> {
+  fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+    let artists = self.artists.join(", ");
+    write!(f, "artists @> {{{}}}", artists)
   }
 }
