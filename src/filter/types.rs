@@ -40,6 +40,13 @@ impl<'g> Genres<'g> {
   }
 }
 
+impl<'g> fmt::Display for Genres<'g> {
+  fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+    let genres = self.genres.join(", ");
+    write!(f, "genres @> {{{}}}", genres)
+  }
+}
+
 pub struct Languages<'l> {
   languages: Vec<&'l str>,
 }
