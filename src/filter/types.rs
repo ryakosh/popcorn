@@ -1,3 +1,4 @@
+use std::fmt;
 use crate::error::Error;
 use crate::consts::{RGX_ALPHA, RGX_NUM};
 
@@ -14,6 +15,12 @@ impl ReleaseCountry {
     } else {
       Err(Error::FilterInvalid)
     }
+  }
+}
+
+impl fmt::Display for ReleaseCountry {
+  fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+    write!(f, "release_country = {}", self.release_country)
   }
 }
 
