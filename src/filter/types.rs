@@ -8,13 +8,11 @@ pub struct ReleaseCountry {
 }
 
 impl<'f> Filter<'f> for ReleaseCountry {
-  type This = Self;
-
-  fn new(release_country: &str) -> Result<Self, Error> {
+  fn new(release_country: &str) -> Result<Box<Self>, Error> {
     if release_country.len() == 2 {
-      Ok(ReleaseCountry {
+      Ok(Box::new(ReleaseCountry {
         release_country: release_country.to_uppercase(),
-      })
+      }))
     } else {
       Err(Error::FilterInvalid)
     }
@@ -32,13 +30,11 @@ pub struct Genres<'g> {
 }
 
 impl<'g> Filter<'g> for Genres<'g> {
-  type This = Self;
-
-  fn new(genres: &'g str) -> Result<Self, Error> {
+  fn new(genres: &'g str) -> Result<Box<Self>, Error> {
     let genres: Vec<&'g str> = genres.split("|").collect();
 
     if genres.iter().all(|genre| RGX_ALPHA.is_match(genre)) {
-      Ok(Genres { genres })
+      Ok(Box::new(Genres { genres }))
     } else {
       Err(Error::FilterInvalid)
     }
@@ -57,13 +53,11 @@ pub struct Languages<'l> {
 }
 
 impl<'l> Filter<'l> for Languages<'l> {
-  type This = Self;
-
-  fn new(languages: &'l str) -> Result<Self, Error> {
+  fn new(languages: &'l str) -> Result<Box<Self>, Error> {
     let languages: Vec<&'l str> = languages.split("|").collect();
 
     if languages.iter().all(|language| RGX_ALPHA.is_match(language)) {
-      Ok(Languages { languages })
+      Ok(Box::new(Languages { languages }))
     } else {
       Err(Error::FilterInvalid)
     }
@@ -82,13 +76,11 @@ pub struct Dierectors<'d> {
 }
 
 impl<'d> Filter<'d> for Dierectors<'d> {
-  type This = Self;
-
-  fn new(dierectors: &'d str) -> Result<Self, Error> {
+  fn new(dierectors: &'d str) -> Result<Box<Self>, Error> {
     let dierectors: Vec<&'d str> = dierectors.split("|").collect();
 
     if dierectors.iter().all(|dierector| RGX_NUM.is_match(dierector)) {
-      Ok(Dierectors { dierectors })
+      Ok(Box::new(Dierectors { dierectors }))
     } else {
       Err(Error::FilterInvalid)
     }
@@ -107,13 +99,11 @@ pub struct Writers<'w> {
 }
 
 impl<'w> Filter<'w> for Writers<'w> {
-  type This = Self;
-
-  fn new(writers: &'w str) -> Result<Self, Error> {
+  fn new(writers: &'w str) -> Result<Box<Self>, Error> {
     let writers: Vec<&'w str> = writers.split("|").collect();
 
     if writers.iter().all(|writer| RGX_NUM.is_match(writer)) {
-      Ok(Writers { writers })
+      Ok(Box::new(Writers { writers }))
     } else {
       Err(Error::FilterInvalid)
     }
@@ -132,13 +122,11 @@ pub struct Artists<'a> {
 }
 
 impl<'a> Filter<'a> for Artists<'a> {
-  type This = Self;
-
-  fn new(artists: &'a str) -> Result<Self, Error> {
+  fn new(artists: &'a str) -> Result<Box<Self>, Error> {
     let artists: Vec<&'a str> = artists.split("|").collect();
 
     if artists.iter().all(|artist| RGX_NUM.is_match(artist)) {
-      Ok(Artists { artists })
+      Ok(Box::new(Artists { artists }))
     } else {
       Err(Error::FilterInvalid)
     }
