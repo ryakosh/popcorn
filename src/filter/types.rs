@@ -9,8 +9,8 @@ pub enum MoviesFilters<'m> {
 }
 
 impl<'m> MoviesFilters<'m> {
-  fn new(filter: &'m str) -> Result<Self, Error> {
-    let filter = filter.split("=").collect::<Vec<&'m str>>();
+  pub fn new(filter: &'m str) -> Result<Self, Error> {
+    let filter = filter.split(":").collect::<Vec<&'m str>>();
     match filter[0] {
       "release_country" => {
         if filter[1].len() == 2 {
