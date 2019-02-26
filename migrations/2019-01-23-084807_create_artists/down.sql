@@ -1,1 +1,1 @@
-DROP TABLE artists;
+DROP TABLE IF EXISTS artists;

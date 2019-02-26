@@ -1,1 +1,1 @@
-DROP TABLE directors;
+DROP TABLE IF EXISTS directors;

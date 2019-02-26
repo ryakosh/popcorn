@@ -1,1 +1,1 @@
-DROP TABLE writers;
+DROP TABLE IF EXISTS writers;

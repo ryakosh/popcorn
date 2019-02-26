@@ -11,3 +11,9 @@ CREATE TABLE movies (
   writers INT[],
   stars INT[]
 );
+
+CREATE INDEX idx_genres ON movies USING GIN(genres);
+CREATE INDEX idx_languages ON movies USING GIN(languages);
+CREATE INDEX idx_directors ON movies USING GIN(directors);
+CREATE INDEX idx_writers ON movies USING GIN(writers);
+CREATE INDEX idx_stars ON movies USING GIN(stars);
