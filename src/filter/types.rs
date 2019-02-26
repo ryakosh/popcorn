@@ -28,7 +28,7 @@ impl<'m> MoviesFilters<'m> {
           Err(Error::FilterInvalid)
         }
       },
-      "dierectors" | "writers" | "artists" => {
+      "directors" | "writers" | "artists" => {
         let nums: Vec<&'m str> = filter[1].split("|").collect();
 
         if nums.iter().all(|mum| RGX_NUM.is_match(mum)) {
@@ -46,13 +46,13 @@ impl<'m> fmt::Display for MoviesFilters<'m> {
   fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
     match self {
       MoviesFilters::Alpha(k, v) => {
-        write!(f, "{} = {}", k , v)
+        write!(f, "{} = '{}'", k , v)
       },
       MoviesFilters::Alphas(k, v) => {
-        write!(f, "{} @> {{{}}}", k, v.join(", "))
+        write!(f, "{} @> '{{{}}}'", k, v.join(", "))
       },
       MoviesFilters::Nums(k, v) => {
-        write!(f, "{} @> {{{}}}", k, v.join(", "))
+        write!(f, "{} @> '{{{}}}'", k, v.join(", "))
       }
     }
   }
