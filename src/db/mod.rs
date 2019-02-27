@@ -11,6 +11,7 @@ use crate::types::query::MoviesQuery;
 use crate::error::*;
 use crate::jsonwebtoken::{encode, Header};
 use crate::config::config;
+use crate::filter::filter_movies;
 use models::{User, MovieCompact, Movie};
 
 fn connect(conn_str: &str) -> PgConnection {
@@ -73,9 +74,14 @@ pub fn movies(movies_query: &MoviesQuery) -> Vec<MovieCompact> {
   };
   let limit = movies_query.limit().unwrap_or(10);
   let page = movies_query.page().unwrap_or(1);
+  let filters = if let Some(filters) = movies_query.filters() {
+    filter_movies(filters).unwrap() // TODO: Return the `Error` to client
+  } else {
+    "".to_string()
+  };
 
   let query = format!(include_str!("raw/movies.sql"),
-    search, limit, (page * limit) - limit);
+    search, filters, limit, (page * limit) - limit);
 
   diesel::sql_query(query)
     .load(&conn)
