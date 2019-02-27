@@ -5,12 +5,14 @@ pub struct MoviesQuery {
   search: Option<String>,
   limit: Option<i32>,
   page: Option<i32>,
+  filters: Option<String>,
 }
 
 impl MoviesQuery {
   pub fn new(search: Option<String>,
          limit: Option<i32>,
-         page: Option<i32>) -> Result<Self, Errors> {
+         page: Option<i32>,
+         filters: Option<String>) -> Result<Self, Errors> {
 
     let is_limit = match limit {
       Some(limit) => limit >= 1 && limit <= 20,
@@ -22,7 +24,7 @@ impl MoviesQuery {
     };
 
     if is_limit && is_page {
-      Ok(MoviesQuery { search, limit, page })
+      Ok(MoviesQuery { search, limit, page, filters })
     } else {
       let mut errors = Vec::new();
 
@@ -36,4 +38,5 @@ impl MoviesQuery {
   pub fn search(&self) -> Option<&String> { self.search.as_ref() }
   pub fn limit(&self) -> Option<i32> { self.limit }
   pub fn page(&self) -> Option<i32> { self.page }
+  pub fn filters(&self) -> Option<&String> { self.filters.as_ref() }
 }
