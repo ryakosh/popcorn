@@ -28,7 +28,7 @@ impl<'m> MoviesFilters<'m> {
           Err(Error::FilterInvalid)
         }
       },
-      "directors" | "writers" | "artists" => {
+      "directors" | "writers" | "stars" => {
         let nums: Vec<&'m str> = filter[1].split("|").collect();
 
         if nums.iter().all(|mum| RGX_NUM.is_match(mum)) {
