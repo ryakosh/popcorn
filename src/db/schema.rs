@@ -17,18 +17,37 @@ table! {
 }
 
 table! {
-    movies (id) {
-        id -> Int4,
+    movies (movie_id) {
+        movie_id -> Int4,
         title -> Varchar,
-        description -> Nullable<Varchar>,
+        description -> Text,
+        poster -> Nullable<Varchar>,
         genres -> Nullable<Array<Text>>,
         languages -> Nullable<Array<Text>>,
         release_country -> Nullable<Varchar>,
         release_date -> Nullable<Date>,
         duration -> Nullable<Int2>,
-        directors -> Nullable<Array<Int4>>,
-        writers -> Nullable<Array<Int4>>,
-        stars -> Nullable<Array<Int4>>,
+    }
+}
+
+table! {
+    movies_artists (movie_id, artist_id) {
+        movie_id -> Int4,
+        artist_id -> Int4,
+    }
+}
+
+table! {
+    movies_directors (movie_id, director_id) {
+        movie_id -> Int4,
+        director_id -> Int4,
+    }
+}
+
+table! {
+    movies_writers (movie_id, writer_id) {
+        movie_id -> Int4,
+        writer_id -> Int4,
     }
 }
 
@@ -53,6 +72,9 @@ allow_tables_to_appear_in_same_query!(
     artists,
     directors,
     movies,
+    movies_artists,
+    movies_directors,
+    movies_writers,
     users,
     writers,
 );
