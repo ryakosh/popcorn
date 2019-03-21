@@ -35,24 +35,22 @@ pub struct Writer<'w> {
 
 #[derive(Queryable, Serialize)]
 pub struct Movie {
-  id: i32,
+  movie_id: i32,
   title: String,
-  description: Option<String>,
+  description: String,
+  poster: Option<String>,
   genres: Option<Vec<String>>,
   languages: Option<Vec<String>>,
   release_country: Option<String>,
   #[serde(skip)]
   release_date: Option<NaiveDate>,
   duration: Option<i16>,
-  directors: Option<Vec<i32>>,
-  writers: Option<Vec<i32>>,
-  stars: Option<Vec<i32>>,
 }
 
 #[table_name = "movies"]
 #[derive(QueryableByName, Serialize)]
 pub struct MovieCompact {
-  id: i32,
+  movie_id: i32,
   title: String,
-  description: Option<String>,
+  description: String,
 }
