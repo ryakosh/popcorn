@@ -21,12 +21,12 @@ table! {
         movie_id -> Int4,
         title -> Varchar,
         description -> Text,
-        poster -> Nullable<Varchar>,
-        genres -> Nullable<Array<Text>>,
-        languages -> Nullable<Array<Text>>,
-        release_country -> Nullable<Varchar>,
-        release_date -> Nullable<Date>,
-        duration -> Nullable<Int2>,
+        poster -> Varchar,
+        genres -> Array<Text>,
+        languages -> Array<Text>,
+        release_country -> Varchar,
+        release_date -> Date,
+        duration -> Int2,
     }
 }
 

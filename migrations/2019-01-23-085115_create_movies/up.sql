@@ -2,12 +2,12 @@ CREATE TABLE movies (
   movie_id SERIAL PRIMARY KEY,
   title VARCHAR NOT NULL,
   description TEXT NOT NULL DEFAULT 'Description is not provided.',
-  poster VARCHAR(19),
-  genres TEXT[],
-  languages TEXT[],
-  release_country VARCHAR(2),
-  release_date DATE,
-  duration SMALLINT
+  poster VARCHAR(19) NOT NULL,
+  genres TEXT[] NOT NULL,
+  languages TEXT[] NOT NULL,
+  release_country VARCHAR(2) NOT NULL,
+  release_date DATE NOT NULL,
+  duration SMALLINT NOT NULL
 );
 
 CREATE TABLE movies_writers (

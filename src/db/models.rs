@@ -9,42 +9,42 @@ pub struct User {
   pub pwd: String,
 }
 
-#[derive(Queryable)]
-pub struct Artist<'a> {
+#[derive(Queryable, Serialize)]
+pub struct Artist {
   pub id: i32,
-  pub first_name: &'a str,
-  pub last_name: &'a str,
-  pub gender: &'a str,
-}
-
-#[derive(Queryable)]
-pub struct Director<'d> {
-  pub id: i32,
-  pub first_name: &'d str,
-  pub last_name: &'d str,
-  pub gender: &'d str,
-}
-
-#[derive(Queryable)]
-pub struct Writer<'w> {
-  pub id: i32,
-  pub first_name: &'w str,
-  pub last_name: &'w str,
-  pub gender: &'w str,
+  pub first_name: String,
+  pub last_name: String,
+  pub gender: String,
 }
 
 #[derive(Queryable, Serialize)]
+pub struct Director {
+  pub id: i32,
+  pub first_name: String,
+  pub last_name: String,
+  pub gender: String,
+}
+
+#[derive(Queryable, Serialize)]
+pub struct Writer {
+  pub id: i32,
+  pub first_name: String,
+  pub last_name: String,
+  pub gender: String,
+}
+
+#[derive(Queryable)]
 pub struct Movie {
   movie_id: i32,
   title: String,
   description: String,
-  poster: Option<String>,
-  genres: Option<Vec<String>>,
-  languages: Option<Vec<String>>,
-  release_country: Option<String>,
+  poster: String,
+  genres: Vec<String>,
+  languages: Vec<String>,
+  release_country: String,
   #[serde(skip)]
-  release_date: Option<NaiveDate>,
-  duration: Option<i16>,
+  release_date: NaiveDate,
+  duration: i16,
 }
 
 #[table_name = "movies"]
