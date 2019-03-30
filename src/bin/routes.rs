@@ -3,7 +3,7 @@ use rocket::request::Form;
 use popcorn::types::Response;
 use popcorn::types::data::{SignupData, SigninData};
 use popcorn::types::query::MoviesQuery;
-use popcorn::types::res::SigninRes;
+use popcorn::types::res::{SigninRes, MovieRes};
 use popcorn::db;
 use popcorn::db::models::{User, MovieCompact, Movie};
 
@@ -39,11 +39,11 @@ pub fn movies(movies_query: Form<MoviesQuery>)
 }
 
 #[get("/movies/<id>")]
-pub fn movie(id: i32) -> Json<Response<Movie>> {
+pub fn movie(id: i32) -> Json<Response<MovieRes>> {
   let result = db::movie(id);
 
   match result {
-    Ok(movie) => Json(Response::with_payload(movie)),
+    Ok(result) => Json(Response::with_payload(MovieRes::new(result.0, result.1, result.2, result.3))),
     Err(errors) => Json(Response::with_errors(errors)),
   }
 }
