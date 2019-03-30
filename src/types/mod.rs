@@ -1,6 +1,6 @@
-use std::time::{Duration, SystemTime};
-use crate::serde::Serialize;
 use crate::error::Errors;
+use crate::serde::Serialize;
+use std::time::{Duration, SystemTime};
 
 pub mod data;
 pub mod query;
@@ -8,85 +8,89 @@ pub mod res;
 
 #[derive(Serialize, Deserialize)]
 pub struct Claims {
-  iss: String,
-  iat: u64,
-  sub: String,
-  exp: u64,
+    iss: String,
+    iat: u64,
+    sub: String,
+    exp: u64,
 }
 
 #[derive(Serialize)]
 pub struct Response<T: Serialize> {
-  pub payload: Option<T>,
-  pub errors: Option<Errors>,
+    pub payload: Option<T>,
+    pub errors: Option<Errors>,
 }
 
 impl Claims {
-  pub fn new(sub: String) -> Claims {
-    Claims { 
-      iss: "Popcorn".to_string(),
-      iat: Self::gen_iat(),
-      exp: Self::gen_exp(),
-      sub,
+    pub fn new(sub: String) -> Claims {
+        Claims {
+            iss: "Popcorn".to_string(),
+            iat: Self::gen_iat(),
+            exp: Self::gen_exp(),
+            sub,
+        }
     }
-  }
 
-  fn gen_exp() -> u64 {
-    let now = SystemTime::now().duration_since(SystemTime::UNIX_EPOCH)
-      .expect("SystemTime before UNIX EPOCH");
-    (now + Duration::from_secs(3 * 3600)).as_secs()
-  }
+    fn gen_exp() -> u64 {
+        let now = SystemTime::now()
+            .duration_since(SystemTime::UNIX_EPOCH)
+            .expect("SystemTime before UNIX EPOCH");
+        (now + Duration::from_secs(3 * 3600)).as_secs()
+    }
 
-  fn gen_iat() -> u64 {
-    SystemTime::now().duration_since(SystemTime::UNIX_EPOCH)
-      .expect("SystemTime before UNIX EPOCH")
-      .as_secs()
-  }
+    fn gen_iat() -> u64 {
+        SystemTime::now()
+            .duration_since(SystemTime::UNIX_EPOCH)
+            .expect("SystemTime before UNIX EPOCH")
+            .as_secs()
+    }
 }
 
 impl<T: Serialize> Response<T> {
-  pub fn new() -> Self {
-    Response {
-      payload: None,
-      errors: None,
+    pub fn new() -> Self {
+        Response {
+            payload: None,
+            errors: None,
+        }
     }
-  }
 
-  pub fn with_payload(payload: T) -> Self {
-    Response {
-      payload: Some(payload),
-      errors: None,
+    pub fn with_payload(payload: T) -> Self {
+        Response {
+            payload: Some(payload),
+            errors: None,
+        }
     }
-  }
 
-  pub fn with_errors(errors: Errors) -> Self {
-    Response {
-      payload: None,
-      errors: Some(errors),
+    pub fn with_errors(errors: Errors) -> Self {
+        Response {
+            payload: None,
+            errors: Some(errors),
+        }
     }
-  }
 }
 
 #[cfg(test)]
 mod tests {
-  use super::*;
+    use super::*;
 
-  #[test]
-  fn claims_gen_exp_is_valid() {
-    let now = SystemTime::now().duration_since(SystemTime::UNIX_EPOCH)
-      .expect("SystemTime before UNIX EPOCH")
-      .as_secs();
-    let exp = Claims::gen_exp();
+    #[test]
+    fn claims_gen_exp_is_valid() {
+        let now = SystemTime::now()
+            .duration_since(SystemTime::UNIX_EPOCH)
+            .expect("SystemTime before UNIX EPOCH")
+            .as_secs();
+        let exp = Claims::gen_exp();
 
-    assert!(exp > now);
-  }
+        assert!(exp > now);
+    }
 
-  #[test]
-  fn claims_gen_iat_is_valid() {
-    let now = SystemTime::now().duration_since(SystemTime::UNIX_EPOCH)
-      .expect("SystemTime before UNIX EPOCH")
-      .as_secs();
-    let iat = Claims::gen_iat();
+    #[test]
+    fn claims_gen_iat_is_valid() {
+        let now = SystemTime::now()
+            .duration_since(SystemTime::UNIX_EPOCH)
+            .expect("SystemTime before UNIX EPOCH")
+            .as_secs();
+        let iat = Claims::gen_iat();
 
-    assert!(iat == now);
-  }
+        assert!(iat == now);
+    }
 }

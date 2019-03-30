@@ -10,41 +10,41 @@ lazy_static! {
 
 #[cfg(test)]
 mod tests {
-  use super::*;
+    use super::*;
 
-  #[test]
-  fn rgx_email_is_valid() {
-    assert!(RGX_EMAIL.is_match("example@example.com"));
-    assert!(RGX_EMAIL.is_match("g@google.com"));
-    assert!(RGX_EMAIL.is_match("info@domain.org"));
+    #[test]
+    fn rgx_email_is_valid() {
+        assert!(RGX_EMAIL.is_match("example@example.com"));
+        assert!(RGX_EMAIL.is_match("g@google.com"));
+        assert!(RGX_EMAIL.is_match("info@domain.org"));
 
-    assert!(!RGX_EMAIL.is_match("example@.com"));
-    assert!(!RGX_EMAIL.is_match("@example.com"));
-    assert!(!RGX_EMAIL.is_match("example"));
-    assert!(!RGX_EMAIL.is_match("تست"));
-  }
+        assert!(!RGX_EMAIL.is_match("example@.com"));
+        assert!(!RGX_EMAIL.is_match("@example.com"));
+        assert!(!RGX_EMAIL.is_match("example"));
+        assert!(!RGX_EMAIL.is_match("تست"));
+    }
 
-  #[test]
-  fn rgx_uname_is_valid() {
-    assert!(RGX_UNAME.is_match("example"));
-    assert!(RGX_UNAME.is_match("e"));
-    assert!(RGX_UNAME.is_match("ex-_"));
-    assert!(RGX_UNAME.is_match("12345"));
+    #[test]
+    fn rgx_uname_is_valid() {
+        assert!(RGX_UNAME.is_match("example"));
+        assert!(RGX_UNAME.is_match("e"));
+        assert!(RGX_UNAME.is_match("ex-_"));
+        assert!(RGX_UNAME.is_match("12345"));
 
-    assert!(!RGX_UNAME.is_match("example@"));
-    assert!(!RGX_UNAME.is_match("exampleتست"));
-    assert!(!RGX_UNAME.is_match("s p a c e s"));
-    assert!(!RGX_UNAME.is_match("thisisaveryveryveryverylongusername"));
-  }
+        assert!(!RGX_UNAME.is_match("example@"));
+        assert!(!RGX_UNAME.is_match("exampleتست"));
+        assert!(!RGX_UNAME.is_match("s p a c e s"));
+        assert!(!RGX_UNAME.is_match("thisisaveryveryveryverylongusername"));
+    }
 
-  #[test]
-  fn rgx_pwd_is_valid() {
-    assert!(RGX_PWD.is_match("example123"));
-    assert!(RGX_PWD.is_match("@2password2@"));
-    assert!(RGX_PWD.is_match("password"));
+    #[test]
+    fn rgx_pwd_is_valid() {
+        assert!(RGX_PWD.is_match("example123"));
+        assert!(RGX_PWD.is_match("@2password2@"));
+        assert!(RGX_PWD.is_match("password"));
 
-    assert!(!RGX_PWD.is_match(""));
-    assert!(!RGX_PWD.is_match("pass"));
-    assert!(!RGX_PWD.is_match("this is a very very very very very very long password"));
-  }
+        assert!(!RGX_PWD.is_match(""));
+        assert!(!RGX_PWD.is_match("pass"));
+        assert!(!RGX_PWD.is_match("this is a very very very very very very long password"));
+    }
 }

@@ -133,7 +133,7 @@ pub fn movie(id: i32) -> Result<(Movie, Vec<Writer>, Vec<Director>, Vec<Artist>)
         .load::<Artist>(&conn);
 
     match (movie, ws, ds, ats) {
-      (Ok(movie), Ok(ws), Ok(ds), Ok(ats)) => Ok((movie, ws, ds, ats)),
-      _ => Err(vec![Error::NotFound])
+        (Ok(movie), Ok(ws), Ok(ds), Ok(ats)) => Ok((movie, ws, ds, ats)),
+        _ => Err(vec![Error::NotFound]),
     }
 }

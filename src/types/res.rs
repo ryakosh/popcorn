@@ -1,5 +1,5 @@
 use crate::chrono::NaiveDate;
-use crate::db::models::{Movie, Artist, Director, Writer};
+use crate::db::models::{Artist, Director, Movie, Writer};
 
 #[derive(Serialize)]
 pub struct SigninRes {
@@ -24,7 +24,12 @@ pub struct MovieRes {
 }
 
 impl MovieRes {
-    pub fn new(movie: Movie, writers: Vec<Writer>, directors: Vec<Director>, artists: Vec<Artist>) -> MovieRes {
+    pub fn new(
+        movie: Movie,
+        writers: Vec<Writer>,
+        directors: Vec<Director>,
+        artists: Vec<Artist>,
+    ) -> MovieRes {
         MovieRes {
             movie_id: movie.movie_id,
             title: movie.title,

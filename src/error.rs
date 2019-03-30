@@ -1,24 +1,24 @@
 #[derive(Serialize, Debug, PartialEq)]
 pub enum Error {
-  UserNFound,
+    UserNFound,
 
-  UnameTaken,
-  UnameInvalid,
-  UnameRequired,
+    UnameTaken,
+    UnameInvalid,
+    UnameRequired,
 
-  EmailTaken,
-  EmailInvalid,
-  EmailRequired,
+    EmailTaken,
+    EmailInvalid,
+    EmailRequired,
 
-  PwdInvalid,
-  PwdRequired,
+    PwdInvalid,
+    PwdRequired,
 
-  LimitInvalid,
-  PageInvalid,
+    LimitInvalid,
+    PageInvalid,
 
-  NotFound,
+    NotFound,
 
-  FilterInvalid,
+    FilterInvalid,
 }
 
 pub type Errors = Vec<Error>;
