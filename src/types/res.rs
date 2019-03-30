@@ -1,23 +1,24 @@
 use crate::db::models::{Writer, Director, Artist};
+use crate::chrono::NaiveDate;
 
 #[derive(Serialize)]
 pub struct SigninRes {
   pub token: String,
 }
 
-#[drive(Serialize)]
+#[derive(Serialize)]
 pub struct MovieRes {
-  movie_id: i32,
-  title: String,
-  description: String,
-  poster: String,
-  genres: Vec<String>,
-  languages: Vec<String>,
-  release_country: String,
+  pub movie_id: i32,
+  pub title: String,
+  pub description: String,
+  pub poster: String,
+  pub genres: Vec<String>,
+  pub languages: Vec<String>,
+  pub release_country: String,
   #[serde(skip)]
-  release_date: NaiveDate,
-  duration: i16,
-  writers: Vec<Writer>,
-  directors: Vec<Director>,
-  stars: Vec<Artist>,
+  pub release_date: NaiveDate,
+  pub duration: i16,
+  pub writers: Vec<Writer>,
+  pub directors: Vec<Director>,
+  pub stars: Vec<Artist>,
 }
