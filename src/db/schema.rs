@@ -1,6 +1,6 @@
 table! {
-    artists (id) {
-        id -> Int4,
+    artists (artist_id) {
+        artist_id -> Int4,
         first_name -> Varchar,
         last_name -> Varchar,
         gender -> Varchar,
@@ -8,8 +8,8 @@ table! {
 }
 
 table! {
-    directors (id) {
-        id -> Int4,
+    directors (director_id) {
+        director_id -> Int4,
         first_name -> Varchar,
         last_name -> Varchar,
         gender -> Varchar,
@@ -60,8 +60,8 @@ table! {
 }
 
 table! {
-    writers (id) {
-        id -> Int4,
+    writers (writer_id) {
+        writer_id -> Int4,
         first_name -> Varchar,
         last_name -> Varchar,
         gender -> Varchar,

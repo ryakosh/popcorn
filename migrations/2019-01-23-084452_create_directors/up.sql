@@ -1,5 +1,5 @@
 CREATE TABLE directors (
-  id SERIAL PRIMARY KEY,
+  director_id SERIAL PRIMARY KEY,
   first_name VARCHAR NOT NULL,
   last_name VARCHAR NOT NULL,
   gender VARCHAR(1) NOT NULL
