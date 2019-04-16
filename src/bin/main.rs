@@ -2,10 +2,20 @@
 
 #[macro_use]
 extern crate rocket;
+extern crate rocket_cors;
+
+use rocket_cors::{AllowedOrigins};
 
 mod routes;
 
 fn main() {
+    let (allowed_origins, failed_origins) = AllowedOrigins::some(&["http://localhost:8080"]);
+
+    let cors = rocket_cors::Cors {
+        allowed_origins,
+        ..Default::default()
+    };
+
     rocket::ignite()
         .mount(
             "/popcorn",
@@ -16,5 +26,6 @@ fn main() {
                 routes::movie,
             ],
         )
+        .attach(cors)
         .launch();
 }
