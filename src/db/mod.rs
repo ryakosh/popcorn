@@ -105,30 +105,24 @@ pub fn movie(id: i32) -> Result<(Movie, Vec<Writer>, Vec<Director>, Vec<Artist>)
         .inner_join(writers::table.on(writers::writer_id.eq(movies_writers::writer_id)))
         .filter(movies_writers::movie_id.eq(id))
         .select((
-            writers::writer_id,
             writers::first_name,
             writers::last_name,
-            writers::gender,
         ))
         .load::<Writer>(&conn);
     let ds = movies_directors::table
         .inner_join(directors::table.on(directors::director_id.eq(movies_directors::director_id)))
         .filter(movies_directors::movie_id.eq(id))
         .select((
-            directors::director_id,
             directors::first_name,
             directors::last_name,
-            directors::gender,
         ))
         .load::<Director>(&conn);
     let ats = movies_artists::table
         .inner_join(artists::table.on(artists::artist_id.eq(movies_artists::artist_id)))
         .filter(movies_artists::movie_id.eq(id))
         .select((
-            artists::artist_id,
             artists::first_name,
             artists::last_name,
-            artists::gender,
         ))
         .load::<Artist>(&conn);
 

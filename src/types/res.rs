@@ -18,9 +18,9 @@ pub struct MovieRes {
     #[serde(skip)]
     pub release_date: NaiveDate,
     pub duration: i16,
-    pub writers: Vec<Writer>,
-    pub directors: Vec<Director>,
-    pub stars: Vec<Artist>,
+    pub writers: Vec<String>,
+    pub directors: Vec<String>,
+    pub stars: Vec<String>,
 }
 
 impl MovieRes {
@@ -40,9 +40,9 @@ impl MovieRes {
             release_country: movie.release_country,
             release_date: movie.release_date,
             duration: movie.duration,
-            writers,
-            directors,
-            stars: artists,
+            writers: writers.into_iter().map(|w| format!("{} {}", w.first_name, w.last_name)).collect(),
+            directors: directors.into_iter().map(|d| format!("{} {}", d.first_name, d.last_name)).collect(),
+            stars: artists.into_iter().map(|a| format!("{} {}", a.first_name, a.last_name)).collect(),
         }
     }
 }

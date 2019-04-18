@@ -11,26 +11,20 @@ pub struct User {
 
 #[derive(Queryable, Serialize)]
 pub struct Artist {
-    pub id: i32,
     pub first_name: String,
     pub last_name: String,
-    pub gender: String,
 }
 
 #[derive(Queryable, Serialize)]
 pub struct Director {
-    pub id: i32,
     pub first_name: String,
     pub last_name: String,
-    pub gender: String,
 }
 
 #[derive(Queryable, Serialize)]
 pub struct Writer {
-    pub id: i32,
     pub first_name: String,
     pub last_name: String,
-    pub gender: String,
 }
 
 #[derive(Queryable)]
