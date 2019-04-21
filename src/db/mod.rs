@@ -55,12 +55,16 @@ pub fn signin(signin_data: &SigninData) -> Result<String, Errors> {
         .first(&conn);
 
     if let Ok(user) = result {
-        Ok(encode(
-            &Header::default(),
-            &Claims::new(user.id),
-            &config.jwt.secret.as_ref(),
-        )
-        .expect("Error encoding token"))
+        if signin_data.pwd() == user.pwd {
+            Ok(encode(
+                &Header::default(),
+                &Claims::new(user.id),
+                &config.jwt.secret.as_ref(),
+            )
+            .expect("Error encoding token"))   
+        } else {
+            Err(vec![Error::UserNFound])
+        }
     } else {
         Err(vec![Error::UserNFound])
     }
