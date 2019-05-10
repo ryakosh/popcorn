@@ -47,4 +47,14 @@ mod tests {
         assert!(!RGX_PWD.is_match("pass"));
         assert!(!RGX_PWD.is_match("this is a very very very very very very long password"));
     }
+
+    #[test]
+    fn rgx_alpha_is_valid() {
+        assert!(RGX_ALPHA.is_match("test"));
+        
+        assert!(!RGX_ALPHA.is_match("test2"));
+        assert!(!RGX_ALPHA.is_match("tesت"));
+        assert!(!RGX_ALPHA.is_match("تست"));
+        assert!(!RGX_ALPHA.is_match("test!"));
+    }
 }
