@@ -57,4 +57,13 @@ mod tests {
         assert!(!RGX_ALPHA.is_match("تست"));
         assert!(!RGX_ALPHA.is_match("test!"));
     }
+
+    #[test]
+    fn rgx_num_is_valid() {
+        assert!(RGX_NUM.is_match("123"));
+
+        assert!(!RGX_NUM.is_match("۱۲۳"));
+        assert!(!RGX_NUM.is_match("abc2"));
+        assert!(!RGX_NUM.is_match("#3"));
+    }
 }
