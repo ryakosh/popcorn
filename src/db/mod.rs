@@ -61,7 +61,7 @@ pub fn signin(signin_data: &SigninData) -> Result<String, Errors> {
                 &Claims::new(user.id),
                 &config.jwt.secret.as_ref(),
             )
-            .expect("Error encoding token"))   
+            .expect("Error encoding token"))
         } else {
             Err(vec![Error::UserNFound])
         }
@@ -108,26 +108,17 @@ pub fn movie(id: i32) -> Result<(Movie, Vec<Writer>, Vec<Director>, Vec<Artist>)
     let ws = movies_writers::table
         .inner_join(writers::table.on(writers::writer_id.eq(movies_writers::writer_id)))
         .filter(movies_writers::movie_id.eq(id))
-        .select((
-            writers::first_name,
-            writers::last_name,
-        ))
+        .select((writers::first_name, writers::last_name))
         .load::<Writer>(&conn);
     let ds = movies_directors::table
         .inner_join(directors::table.on(directors::director_id.eq(movies_directors::director_id)))
         .filter(movies_directors::movie_id.eq(id))
-        .select((
-            directors::first_name,
-            directors::last_name,
-        ))
+        .select((directors::first_name, directors::last_name))
         .load::<Director>(&conn);
     let ats = movies_artists::table
         .inner_join(artists::table.on(artists::artist_id.eq(movies_artists::artist_id)))
         .filter(movies_artists::movie_id.eq(id))
-        .select((
-            artists::first_name,
-            artists::last_name,
-        ))
+        .select((artists::first_name, artists::last_name))
         .load::<Artist>(&conn);
 
     match (movie, ws, ds, ats) {

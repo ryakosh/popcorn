@@ -4,7 +4,7 @@
 extern crate rocket;
 extern crate rocket_cors;
 
-use rocket_cors::{AllowedOrigins};
+use rocket_cors::AllowedOrigins;
 
 mod routes;
 

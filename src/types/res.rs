@@ -40,9 +40,18 @@ impl MovieRes {
             release_country: movie.release_country,
             release_date: movie.release_date,
             duration: movie.duration,
-            writers: writers.into_iter().map(|w| format!("{} {}", w.first_name, w.last_name)).collect(),
-            directors: directors.into_iter().map(|d| format!("{} {}", d.first_name, d.last_name)).collect(),
-            stars: artists.into_iter().map(|a| format!("{} {}", a.first_name, a.last_name)).collect(),
+            writers: writers
+                .into_iter()
+                .map(|w| format!("{} {}", w.first_name, w.last_name))
+                .collect(),
+            directors: directors
+                .into_iter()
+                .map(|d| format!("{} {}", d.first_name, d.last_name))
+                .collect(),
+            stars: artists
+                .into_iter()
+                .map(|a| format!("{} {}", a.first_name, a.last_name))
+                .collect(),
         }
     }
 }

@@ -31,7 +31,7 @@ mod tests {
         let test_secret = "test";
         let test_config: Config = from_str(&format!("[jwt]\nsecret=\"{}\"", test_secret))
             .expect("Error deserializing the config file");
-        
+
         assert_eq!(test_secret, test_config.jwt.secret);
     }
 }

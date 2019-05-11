@@ -70,10 +70,12 @@ mod tests {
         let test_page = Some(3);
         let test_filters = Some(String::from("genres:Adventure|Action,release_country:US"));
 
-        let test_moviesquery = MoviesQuery::new(test_search.clone(),
+        let test_moviesquery = MoviesQuery::new(
+            test_search.clone(),
             test_limit,
             test_page,
-            test_filters.clone());
+            test_filters.clone(),
+        );
 
         match test_moviesquery {
             Ok(test_moviesquery) => {
@@ -81,8 +83,8 @@ mod tests {
                 assert_eq!(test_limit, test_moviesquery.limit);
                 assert_eq!(test_page, test_moviesquery.page);
                 assert_eq!(test_filters, test_moviesquery.filters);
-            },
-            Err(Errors) => panic!("{:?}", Errors)
+            }
+            Err(Errors) => panic!("{:?}", Errors),
         };
     }
 }

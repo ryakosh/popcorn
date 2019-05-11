@@ -51,7 +51,7 @@ mod tests {
     #[test]
     fn rgx_alpha_is_valid() {
         assert!(RGX_ALPHA.is_match("test"));
-        
+
         assert!(!RGX_ALPHA.is_match("test2"));
         assert!(!RGX_ALPHA.is_match("tesت"));
         assert!(!RGX_ALPHA.is_match("تست"));
