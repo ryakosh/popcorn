@@ -51,3 +51,26 @@ impl<'m> fmt::Display for MoviesFilters<'m> {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn moviesfilters_new_is_valid() {
+        let test_filter = "release_country:uS";
+        let test_moviesfilters = MoviesFilters::new(test_filter);
+
+        match test_moviesfilters {
+            Ok(test_moviesfilters) => match test_moviesfilters {
+                MoviesFilters::Alpha(k, v) => {
+                    let test_filter = test_filter.split(":").collect::<Vec<&str>>();
+                    assert_eq!(k, test_filter[0]);
+                    assert_eq!(v, test_filter[1].to_uppercase());
+                }
+                _ => panic!("Error, wrong variant"),
+            },
+            Err(error) => panic!("{:?}", error),
+        }
+    }
+}
