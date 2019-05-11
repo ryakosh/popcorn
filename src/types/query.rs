@@ -58,3 +58,31 @@ impl MoviesQuery {
         self.filters.as_ref()
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn moviesquery_new_is_valid() {
+        let test_search = Some(String::from("test"));
+        let test_limit = Some(5);
+        let test_page = Some(3);
+        let test_filters = Some(String::from("genres:Adventure|Action,release_country:US"));
+
+        let test_moviesquery = MoviesQuery::new(test_search.clone(),
+            test_limit,
+            test_page,
+            test_filters.clone());
+
+        match test_moviesquery {
+            Ok(test_moviesquery) => {
+                assert_eq!(test_search, test_moviesquery.search);
+                assert_eq!(test_limit, test_moviesquery.limit);
+                assert_eq!(test_page, test_moviesquery.page);
+                assert_eq!(test_filters, test_moviesquery.filters);
+            },
+            Err(Errors) => panic!("{:?}", Errors)
+        };
+    }
+}
