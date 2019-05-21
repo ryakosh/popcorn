@@ -10,6 +10,5 @@ pub fn filter_movies(filters: &str) -> Result<String, Error> {
     }
 
     let mut filters = vec.join(" AND ");
-    filters.insert_str(0, "AND ");
     Ok(filters)
 }

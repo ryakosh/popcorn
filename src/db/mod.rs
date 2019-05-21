@@ -73,30 +73,42 @@ pub fn signin(signin_data: &SigninData) -> Result<String, Errors> {
 pub fn movies(movies_query: &MoviesQuery) -> Vec<MovieCompact> {
     let conn = connect(&var("DATABASE_URL").expect("Can't find DATABASE_URL environment variable"));
 
-    let search = if let Some(search) = movies_query.search() {
-        search
-    } else {
-        ""
-    };
     let limit = movies_query.limit().unwrap_or(10);
     let page = movies_query.page().unwrap_or(1);
-    let filters = if let Some(filters) = movies_query.filters() {
+    let mut filters = if let Some(filters) = movies_query.filters() {
         filter_movies(filters).unwrap() // TODO: Return the `Error` to client
     } else {
         "".to_string()
     };
 
-    let query = format!(
-        include_str!("raw/movies.sql"),
+    diesel::sql_query(movies_get_query(movies_query.search(), limit, page, &mut filters))
+        .load(&conn)
+        .expect("Error executing query")
+}
+
+fn movies_get_query(moviesquery_search: Option<&String>, limit: i32, page: i32, filters: &mut String) -> String {
+    if let Some(search) = moviesquery_search {
+        if !filters.is_empty() {
+            filters.insert_str(0, "AND ");
+        }
+
+        format!(
+        include_str!("raw/movies-search.sql"),
         search,
         filters,
         limit,
-        (page * limit) - limit
-    );
+        (page * limit) - limit)
+    } else {
+        if !filters.is_empty() {
+            filters.insert_str(0, "WHERE ");
+        }
 
-    diesel::sql_query(query)
-        .load(&conn)
-        .expect("Error executing query")
+        format!(
+        include_str!("raw/movies.sql"),
+        filters,
+        limit,
+        (page * limit) - limit)
+    }
 }
 
 pub fn movie(id: i32) -> Result<(Movie, Vec<Writer>, Vec<Director>, Vec<Artist>), Errors> {
