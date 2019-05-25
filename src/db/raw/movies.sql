@@ -1,6 +1,7 @@
 SELECT movie_id,
        title,
-       description
+       description,
+       poster
 FROM movies
 {} -- Movie filters
 LIMIT {}
