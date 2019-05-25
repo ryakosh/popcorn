@@ -46,4 +46,5 @@ pub struct MovieCompact {
     pub movie_id: i32,
     pub title: String,
     pub description: String,
+    pub poster: String,
 }
