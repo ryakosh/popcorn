@@ -2,7 +2,7 @@ use crate::toml::from_str;
 use std::fs::read_to_string;
 
 lazy_static! {
-    pub static ref config: Config = Config::new();
+    pub static ref CONFIG: Config = Config::new();
 }
 
 #[derive(Deserialize)]

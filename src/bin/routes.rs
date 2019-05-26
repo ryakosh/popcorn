@@ -1,5 +1,5 @@
 use popcorn::db;
-use popcorn::db::models::{Movie, MovieCompact, User};
+use popcorn::db::models::MovieCompact;
 use popcorn::types::data::{SigninData, SignupData};
 use popcorn::types::query::MoviesQuery;
 use popcorn::types::res::{MovieRes, SigninRes};

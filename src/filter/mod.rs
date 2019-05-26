@@ -9,6 +9,6 @@ pub fn filter_movies(filters: &str) -> Result<String, Error> {
         vec.push(MoviesFilters::new(filter)?.to_string());
     }
 
-    let mut filters = vec.join(" AND ");
+    let filters = vec.join(" AND ");
     Ok(filters)
 }

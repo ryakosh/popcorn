@@ -1,16 +1,14 @@
 pub mod models;
 pub mod schema;
 
-use crate::config::config;
+use crate::config::CONFIG;
 use crate::diesel;
 use crate::diesel::prelude::*;
-use crate::diesel::sql_types::{Integer, Text, TinyInt};
 use crate::error::*;
 use crate::filter::filter_movies;
 use crate::jsonwebtoken::{encode, Header};
 use crate::types::data::{SigninData, SignupData};
 use crate::types::query::MoviesQuery;
-use crate::types::res::MovieRes;
 use crate::types::Claims;
 use models::{Artist, Director, Movie, MovieCompact, User, Writer};
 use schema::{artists, directors, movies_artists, movies_directors, movies_writers, writers};
@@ -59,7 +57,7 @@ pub fn signin(signin_data: &SigninData) -> Result<String, Errors> {
             Ok(encode(
                 &Header::default(),
                 &Claims::new(user.id),
-                &config.jwt.secret.as_ref(),
+                &CONFIG.jwt.secret.as_ref(),
             )
             .expect("Error encoding token"))
         } else {
@@ -81,33 +79,45 @@ pub fn movies(movies_query: &MoviesQuery) -> Vec<MovieCompact> {
         "".to_string()
     };
 
-    diesel::sql_query(movies_get_query(movies_query.search(), limit, page, &mut filters))
-        .load(&conn)
-        .expect("Error executing query")
+    diesel::sql_query(movies_get_query(
+        movies_query.search(),
+        limit,
+        page,
+        &mut filters,
+    ))
+    .load(&conn)
+    .expect("Error executing query")
 }
 
-fn movies_get_query(moviesquery_search: Option<&String>, limit: i32, page: i32, filters: &mut String) -> String {
+fn movies_get_query(
+    moviesquery_search: Option<&String>,
+    limit: i32,
+    page: i32,
+    filters: &mut String,
+) -> String {
     if let Some(search) = moviesquery_search {
         if !filters.is_empty() {
             filters.insert_str(0, "AND ");
         }
 
         format!(
-        include_str!("raw/movies-search.sql"),
-        search,
-        filters,
-        limit,
-        (page * limit) - limit)
+            include_str!("raw/movies-search.sql"),
+            search,
+            filters,
+            limit,
+            (page * limit) - limit
+        )
     } else {
         if !filters.is_empty() {
             filters.insert_str(0, "WHERE ");
         }
 
         format!(
-        include_str!("raw/movies.sql"),
-        filters,
-        limit,
-        (page * limit) - limit)
+            include_str!("raw/movies.sql"),
+            filters,
+            limit,
+            (page * limit) - limit
+        )
     }
 }
 

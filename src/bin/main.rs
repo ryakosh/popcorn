@@ -9,7 +9,7 @@ use rocket_cors::AllowedOrigins;
 mod routes;
 
 fn main() {
-    let (allowed_origins, failed_origins) = AllowedOrigins::some(&["http://localhost:8080"]);
+    let (allowed_origins, _) = AllowedOrigins::some(&["http://localhost:8080"]);
 
     let cors = rocket_cors::Cors {
         allowed_origins,
