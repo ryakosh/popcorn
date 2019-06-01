@@ -29,7 +29,10 @@ pub fn signin(signin_data: Json<SigninData>) -> Json<Response<SigninRes>> {
 
 #[get("/movies?<movies_query..>")]
 pub fn movies(movies_query: Form<MoviesQuery>) -> Json<Response<Vec<MovieCompact>>> {
-    Json(Response::with_payload(db::movies(&movies_query.0)))
+    match db::movies(&movies_query.0) {
+        Ok(result) => Json(Response::with_payload(result)),
+        Err(errors) => Json(Response::with_errors(errors)),
+    }
 }
 
 #[get("/movies/<id>")]

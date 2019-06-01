@@ -68,25 +68,34 @@ pub fn signin(signin_data: &SigninData) -> Result<String, Errors> {
     }
 }
 
-pub fn movies(movies_query: &MoviesQuery) -> Vec<MovieCompact> {
+pub fn movies(movies_query: &MoviesQuery) -> Result<Vec<MovieCompact>, Errors> {
     let conn = connect(&var("DATABASE_URL").expect("Can't find DATABASE_URL environment variable"));
+    let mut errors = vec![];
 
     let limit = movies_query.limit().unwrap_or(10);
     let page = movies_query.page().unwrap_or(1);
-    let mut filters = if let Some(filters) = movies_query.filters() {
-        filter_movies(filters).unwrap() // TODO: Return the `Error` to client
+    let mut filters = "".to_string();
+    if let Some(qfilters) = movies_query.filters() {
+        match filter_movies(qfilters) {
+            Ok(qfilters) => { filters = qfilters; }
+            Err(error) => { errors.push(error); }
+        }
     } else {
-        "".to_string()
+        filters = "".to_string()
     };
 
-    diesel::sql_query(movies_get_query(
-        movies_query.search(),
-        limit,
-        page,
-        &mut filters,
-    ))
-    .load(&conn)
-    .expect("Error executing query")
+    if errors.is_empty() {
+        Ok(diesel::sql_query(movies_get_query(
+            movies_query.search(),
+            limit,
+            page,
+            &mut filters,
+        ))
+        .load(&conn)
+        .expect("Error executing query"))
+    } else {
+        Err(errors)
+    }
 }
 
 fn movies_get_query(
