@@ -1,4 +1,6 @@
-use crate::error::*;
+use crate::consts::{RGX_ALPHA, RGX_NUM};
+use crate::error::Error;
+use crate::filter::types::MoviesFilters;
 
 #[derive(FromForm)]
 pub struct MoviesQuery {
@@ -9,42 +11,6 @@ pub struct MoviesQuery {
 }
 
 impl MoviesQuery {
-    pub fn new(
-        search: Option<String>,
-        limit: Option<i32>,
-        page: Option<i32>,
-        filters: Option<String>,
-    ) -> Result<Self, Errors> {
-        let is_limit = match limit {
-            Some(limit) => limit >= 1 && limit <= 20,
-            None => true,
-        };
-        let is_page = match page {
-            Some(page) => page >= 1,
-            None => true,
-        };
-
-        if is_limit && is_page {
-            Ok(MoviesQuery {
-                search,
-                limit,
-                page,
-                filters,
-            })
-        } else {
-            let mut errors = Vec::new();
-
-            if let false = is_limit {
-                errors.push(Error::LimitInvalid)
-            }
-            if let false = is_page {
-                errors.push(Error::PageInvalid)
-            }
-
-            Err(errors)
-        }
-    }
-
     pub fn search(&self) -> Option<&String> {
         self.search.as_ref()
     }
@@ -56,6 +22,72 @@ impl MoviesQuery {
     }
     pub fn filters(&self) -> Option<&String> {
         self.filters.as_ref()
+    }
+
+    pub fn validate(&self) -> Result<&Self, Error> {
+        self.validate_limit()?;
+        self.validate_page()?;
+        self.validate_filters()?;
+
+        Ok(self)
+    }
+
+    fn validate_limit(&self) -> Result<(), Error> {
+        if let Some(limit) = self.limit.as_ref() {
+            if *limit >= 1 && *limit <= 20 {
+                Ok(())
+            } else {
+                Err(Error::LimitInvalid)
+            }
+        } else {
+            Ok(())
+        }
+    }
+    fn validate_page(&self) -> Result<(), Error> {
+        if let Some(page) = self.page.as_ref() {
+            if *page >= 1 {
+                Ok(())
+            } else {
+                Err(Error::PageInvalid)
+            }
+        } else {
+            Ok(())
+        }
+    }
+    fn validate_filters(&self) -> Result<(), Error> {
+        if let Some(filters) = self.filters.as_ref() {
+            for filter in filters.split(",") {
+                let filter = filter.split(":").collect::<Vec<&str>>();
+
+                match filter[0] {
+                    "release_country" => {
+                        if filter[1].len() != 2 {
+                            return Err(Error::FilterInvalid);
+                        }
+                    }
+                    "genres" | "languages" => {
+                        let alphas: Vec<&str> = filter[1].split("|").collect();
+
+                        if !alphas.iter().all(|alpha| RGX_ALPHA.is_match(alpha)) {
+                            return Err(Error::FilterInvalid);
+                        }
+                    }
+                    "directors" | "writers" | "stars" => {
+                        let nums: Vec<&str> = filter[1].split("|").collect();
+
+                        if !nums.iter().all(|mum| RGX_NUM.is_match(mum)) {
+                            return Err(Error::FilterInvalid);
+                        }
+                    }
+                    _ => {
+                        return Err(Error::FilterInvalid);
+                    }
+                }
+            }
+            return Ok(());
+        } else {
+            return Ok(());
+        }
     }
 }
 

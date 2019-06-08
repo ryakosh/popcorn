@@ -20,5 +20,3 @@ pub enum Error {
 
     FilterInvalid,
 }
-
-pub type Errors = Vec<Error>;

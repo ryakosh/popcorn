@@ -9,35 +9,23 @@ pub enum MoviesFilters<'m> {
 }
 
 impl<'m> MoviesFilters<'m> {
-    pub fn new(filter: &'m str) -> Result<Self, Error> {
+    pub fn new(filter: &'m str) -> Self {
         let filter = filter.split(":").collect::<Vec<&'m str>>();
         match filter[0] {
-            "release_country" => {
-                if filter[1].len() == 2 {
-                    Ok(MoviesFilters::Alpha(filter[0], filter[1].to_uppercase()))
-                } else {
-                    Err(Error::FilterInvalid)
-                }
-            }
+            "release_country" => MoviesFilters::Alpha(filter[0], filter[1].to_uppercase()),
             "genres" | "languages" => {
                 let alphas: Vec<&'m str> = filter[1].split("|").collect();
 
-                if alphas.iter().all(|alpha| RGX_ALPHA.is_match(alpha)) {
-                    Ok(MoviesFilters::Alphas(filter[0], alphas))
-                } else {
-                    Err(Error::FilterInvalid)
-                }
+                MoviesFilters::Alphas(filter[0], alphas)
             }
             "directors" | "writers" | "stars" => {
                 let nums: Vec<&'m str> = filter[1].split("|").collect();
 
-                if nums.iter().all(|mum| RGX_NUM.is_match(mum)) {
-                    Ok(MoviesFilters::Nums(filter[0], nums))
-                } else {
-                    Err(Error::FilterInvalid)
-                }
+                MoviesFilters::Nums(filter[0], nums)
             }
-            _ => Err(Error::FilterInvalid),
+            _ => {
+                panic!("Error invalid input");
+            }
         }
     }
 }

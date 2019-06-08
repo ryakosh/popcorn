@@ -4,7 +4,7 @@ pub mod schema;
 use crate::config::CONFIG;
 use crate::diesel;
 use crate::diesel::prelude::*;
-use crate::error::*;
+use crate::error::Error;
 use crate::filter::filter_movies;
 use crate::jsonwebtoken::{encode, Header};
 use crate::types::data::{SigninData, SignupData};
@@ -18,21 +18,23 @@ fn connect(conn_str: &str) -> PgConnection {
     PgConnection::establish(conn_str).expect(&format!("Error connecting to: {}", conn_str))
 }
 
-pub fn signup(singup_data: &SignupData) -> Result<(), Errors> {
+pub fn signup(signup_data: &SignupData) -> Result<(), Error> {
     use schema::users;
 
     let conn = connect(&var("DATABASE_URL").expect("Can't find DATABASE_URL environment variable"));
+    let signup_data = signup_data.validate()?;
+
     let user: Result<User, _> = users::table
-        .find(singup_data.uname().to_lowercase())
+        .find(signup_data.uname().to_lowercase())
         .first(&conn);
 
     if let Ok(_) = user {
-        Err(vec![Error::UnameTaken])
+        Err(Error::UnameTaken)
     } else {
         let new_user = User {
-            id: singup_data.uname().to_string(),
-            email: singup_data.email().to_string(),
-            pwd: singup_data.pwd().to_string(),
+            id: signup_data.uname().to_string(),
+            email: signup_data.email().to_string(),
+            pwd: signup_data.pwd().to_string(),
         };
 
         diesel::insert_into(users::table)
@@ -44,10 +46,12 @@ pub fn signup(singup_data: &SignupData) -> Result<(), Errors> {
     }
 }
 
-pub fn signin(signin_data: &SigninData) -> Result<String, Errors> {
+pub fn signin(signin_data: &SigninData) -> Result<String, Error> {
     use schema::users;
 
     let conn = connect(&var("DATABASE_URL").expect("Can't find DATABASE_URL environment variable"));
+    let signin_data = signin_data.validate()?;
+
     let result: Result<User, _> = users::table
         .find(signin_data.uname().to_lowercase())
         .first(&conn);
@@ -61,50 +65,29 @@ pub fn signin(signin_data: &SigninData) -> Result<String, Errors> {
             )
             .expect("Error encoding token"))
         } else {
-            Err(vec![Error::UserNFound])
+            Err(Error::UserNFound)
         }
     } else {
-        Err(vec![Error::UserNFound])
+        Err(Error::UserNFound)
     }
 }
 
-pub fn movies(movies_query: &MoviesQuery) -> Result<Vec<MovieCompact>, Errors> {
+pub fn movies(movies_query: &MoviesQuery) -> Result<Vec<MovieCompact>, Error> {
     let conn = connect(&var("DATABASE_URL").expect("Can't find DATABASE_URL environment variable"));
-    let mut errors = vec![];
+    let movies_query = movies_query.validate()?;
 
-    let limit = movies_query.limit().unwrap_or(10);
-    let page = movies_query.page().unwrap_or(1);
-    let mut filters = "".to_string();
-    if let Some(qfilters) = movies_query.filters() {
-        match filter_movies(qfilters) {
-            Ok(qfilters) => { filters = qfilters; }
-            Err(error) => { errors.push(error); }
-        }
-    } else {
-        filters = "".to_string()
-    };
-
-    if errors.is_empty() {
-        Ok(diesel::sql_query(movies_get_query(
-            movies_query.search(),
-            limit,
-            page,
-            &mut filters,
-        ))
-        .load(&conn)
-        .expect("Error executing query"))
-    } else {
-        Err(errors)
-    }
+    Ok(diesel::sql_query(movies_get_query(
+        movies_query.search().unwrap_or(&"".to_string()),
+        movies_query.limit().unwrap_or(10),
+        movies_query.page().unwrap_or(1),
+        &mut filter_movies(movies_query.filters().unwrap_or(&"".to_string())),
+    ))
+    .load(&conn)
+    .expect("Error executing query"))
 }
 
-fn movies_get_query(
-    moviesquery_search: Option<&String>,
-    limit: i32,
-    page: i32,
-    filters: &mut String,
-) -> String {
-    if let Some(search) = moviesquery_search {
+fn movies_get_query(search: &String, limit: i32, page: i32, filters: &mut String) -> String {
+    if !search.is_empty() {
         if !filters.is_empty() {
             filters.insert_str(0, "AND ");
         }
@@ -130,7 +113,7 @@ fn movies_get_query(
     }
 }
 
-pub fn movie(id: i32) -> Result<(Movie, Vec<Writer>, Vec<Director>, Vec<Artist>), Errors> {
+pub fn movie(id: i32) -> Result<(Movie, Vec<Writer>, Vec<Director>, Vec<Artist>), Error> {
     use schema::movies;
 
     let conn = connect(&var("DATABASE_URL").expect("Can't find DATABASE_URL environment variable"));
@@ -154,6 +137,6 @@ pub fn movie(id: i32) -> Result<(Movie, Vec<Writer>, Vec<Director>, Vec<Artist>)
 
     match (movie, ws, ds, ats) {
         (Ok(movie), Ok(ws), Ok(ds), Ok(ats)) => Ok((movie, ws, ds, ats)),
-        _ => Err(vec![Error::NotFound]),
+        _ => Err(Error::NotFound),
     }
 }

@@ -1,4 +1,4 @@
-use crate::error::Errors;
+use crate::error::Error;
 use crate::serde::Serialize;
 use std::time::{Duration, SystemTime};
 
@@ -17,7 +17,7 @@ pub struct Claims {
 #[derive(Serialize)]
 pub struct Response<T: Serialize> {
     pub payload: Option<T>,
-    pub errors: Option<Errors>,
+    pub error: Option<Error>,
 }
 
 impl Claims {
@@ -49,21 +49,21 @@ impl<T: Serialize> Response<T> {
     pub fn new() -> Self {
         Response {
             payload: None,
-            errors: None,
+            error: None,
         }
     }
 
     pub fn with_payload(payload: T) -> Self {
         Response {
             payload: Some(payload),
-            errors: None,
+            error: None,
         }
     }
 
-    pub fn with_errors(errors: Errors) -> Self {
+    pub fn with_error(error: Error) -> Self {
         Response {
             payload: None,
-            errors: Some(errors),
+            error: Some(error),
         }
     }
 }
