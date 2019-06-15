@@ -1,6 +1,6 @@
 SELECT movie_id,
        title,
-       description,
+       release_date,
        poster
 FROM movies
 {} -- Movie filters
