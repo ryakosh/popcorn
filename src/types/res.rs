@@ -15,7 +15,6 @@ pub struct MovieRes {
     pub genres: Vec<String>,
     pub languages: Vec<String>,
     pub release_country: String,
-    #[serde(skip)]
     pub release_date: NaiveDate,
     pub duration: i16,
     pub writers: Vec<String>,

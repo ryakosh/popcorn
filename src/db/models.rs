@@ -45,6 +45,6 @@ pub struct Movie {
 pub struct MovieCompact {
     pub movie_id: i32,
     pub title: String,
-    pub description: String,
+    pub release_date: NaiveDate,
     pub poster: String,
 }

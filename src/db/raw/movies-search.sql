@@ -1,6 +1,6 @@
 SELECT movie_id,
        title,
-       description,
+       release_date,
        poster,
        ts_rank_cd(_document, query) AS rank
 FROM movies,
