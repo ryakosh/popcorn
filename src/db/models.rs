@@ -1,4 +1,4 @@
-use super::schema::{movies, users};
+use super::schema::{movies, users, ratings};
 use crate::chrono::NaiveDate;
 
 #[table_name = "users"]
@@ -38,6 +38,7 @@ pub struct Movie {
     pub release_country: String,
     pub release_date: NaiveDate,
     pub duration: i16,
+    pub score: f32,
 }
 
 #[table_name = "movies"]
@@ -47,4 +48,12 @@ pub struct MovieCompact {
     pub title: String,
     pub release_date: NaiveDate,
     pub poster: String,
+}
+
+#[table_name = "ratings"]
+#[derive(Insertable)]
+pub struct NewRating {
+    pub user_id: String,
+    pub movie_id: i32,
+    pub rating: i32,
 }

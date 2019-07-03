@@ -22,4 +22,6 @@ pub enum Error {
     NotFound,
 
     FilterInvalid,
+
+    InputInvalid,
 }

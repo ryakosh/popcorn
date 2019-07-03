@@ -27,6 +27,7 @@ table! {
         release_country -> Varchar,
         release_date -> Date,
         duration -> Int2,
+        score -> Float4,
     }
 }
 
@@ -48,6 +49,14 @@ table! {
     movies_writers (movie_id, writer_id) {
         movie_id -> Int4,
         writer_id -> Int4,
+    }
+}
+
+table! {
+    ratings (user_id, movie_id) {
+        user_id -> Varchar,
+        movie_id -> Int4,
+        rating -> Int4,
     }
 }
 
@@ -75,6 +84,7 @@ allow_tables_to_appear_in_same_query!(
     movies_artists,
     movies_directors,
     movies_writers,
+    ratings,
     users,
     writers,
 );

@@ -14,6 +14,11 @@ pub struct SigninData<'s> {
     pwd: &'s str,
 }
 
+#[derive(Deserialize)]
+pub struct RateData {
+    rating: i32,
+}
+
 impl<'s> SignupData<'s> {
     pub fn uname(&self) -> &'s str {
         self.uname
@@ -83,6 +88,20 @@ impl<'s> SigninData<'s> {
             Ok(())
         } else {
             Err(Error::PwdInvalid)
+        }
+    }
+}
+
+impl RateData {
+    pub fn rating(&self) -> i32 {
+        self.rating
+    }
+
+    pub fn validate(&self) -> Result<&Self, Error> {
+        if self.rating >= 0 && self.rating <= 5 {
+            Ok(self)
+        } else {
+           Err(Error::InputInvalid)
         }
     }
 }

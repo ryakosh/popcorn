@@ -10,6 +10,12 @@ use crate::error;
 #[derive(Debug)]
 pub struct ClaimedUser(String);
 
+impl ClaimedUser {
+    pub fn uname(&self) -> &str {
+        &self.0
+    }
+}
+
 impl<'a, 'r> request::FromRequest<'a, 'r> for ClaimedUser {
     type Error = error::Error;
 
