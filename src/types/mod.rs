@@ -15,7 +15,7 @@ pub struct Claims {
     pub exp: u64,
 }
 
-#[derive(Serialize)]
+#[derive(Serialize, Debug)]
 pub struct Response<T: Serialize> {
     pub payload: Option<T>,
     pub error: Option<Error>,
