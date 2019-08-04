@@ -11,6 +11,8 @@ mod routes;
 fn main() {
     let (allowed_origins, _) = AllowedOrigins::some(
         &["https://popcrn.ir"]);
+    #[cfg(debug_assertions)]
+    let allowed_origins = AllowedOrigins::all();
 
     let cors = rocket_cors::Cors {
         allowed_origins,
