@@ -1,4 +1,4 @@
-use super::schema::{movies, users, ratings};
+use super::schema::{movies, ratings, users};
 use crate::chrono::NaiveDate;
 
 #[table_name = "users"]

@@ -4,8 +4,8 @@ use std::time::{Duration, SystemTime};
 
 pub mod data;
 pub mod query;
-pub mod res;
 pub mod req_guards;
+pub mod res;
 
 #[derive(Serialize, Deserialize)]
 pub struct Claims {

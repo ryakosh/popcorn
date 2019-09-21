@@ -101,7 +101,7 @@ impl RateData {
         if self.rating >= 0 && self.rating <= 5 {
             Ok(self)
         } else {
-           Err(Error::InputInvalid)
+            Err(Error::InputInvalid)
         }
     }
 }
