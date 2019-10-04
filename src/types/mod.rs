@@ -93,4 +93,20 @@ mod tests {
 
         assert!(iat == now);
     }
+
+    #[test]
+    fn response_initializers_work_correctly() {
+        let res: Response<()> = Response::new();
+        assert_eq!(res.payload, None);
+        assert_eq!(res.error, None);
+
+        let test_payload = "test";
+        let res = Response::with_payload(test_payload);
+        assert_eq!(res.payload, Some(test_payload));
+        assert_eq!(res.error, None);
+
+        let res: Response<()> = Response::with_error(Error::NotFound);
+        assert_eq!(res.payload, None);
+        assert_eq!(res.error, Some(Error::NotFound));
+    }
 }
