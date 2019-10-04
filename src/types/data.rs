@@ -92,32 +92,86 @@ mod tests {
     use super::*;
 
     #[test]
-    fn signupdata_new_is_valid() {
-        let data = SignupData::new("uname", "password", "example@example.com")
-            .expect("Error instantiating SignupData");
-        assert_eq!(data.uname, "uname");
-        assert_eq!(data.pwd, "password");
-        assert_eq!(data.email, "example@example.com");
+    fn signupdata_getters_work_correctly() {
+        let test_uname = "test";
+        let test_pwd = "testpwd1";
+        let test_email = "test@test.test";
 
-        let data = SignupData::new("uname", "pass", "example@example");
-        if let Err(errors) = data {
-            assert_eq!(errors, &[Error::PwdInvalid, Error::EmailInvalid]);
-        } else {
-            panic!("SignupData should return Errors");
+        let data = SignupData {
+            uname: test_uname,
+            pwd: test_pwd,
+            email: test_email,
+        };
+
+        assert_eq!(data.uname(), test_uname);
+        assert_eq!(data.pwd(), test_pwd);
+        assert_eq!(data.email(), test_email);
+    }
+
+    #[test]
+    fn signupdata_validate_works_correctly() {
+        let test_uname = "test";
+        let test_pwd = "testpwd1";
+        let test_email = "test@test.test";
+        let data = SignupData {
+            uname: test_uname,
+            pwd: test_pwd,
+            email: test_email,
+        };
+
+        if let Err(err) = data.validate() {
+            panic!(format!("Err: {:?}", err))
+        }
+
+        let test_email = "test@";
+        let data = SignupData {
+            uname: test_uname,
+            pwd: test_pwd,
+            email: test_email,
+        };
+
+        match data.validate() {
+            Ok(_) => panic!("Email is invalid"),
+            Err(err) => assert_eq!(err, Error::EmailInvalid),
         }
     }
 
     #[test]
-    fn signindata_new_is_valid() {
-        let data = SigninData::new("uname", "password").expect("Error instantiating SigninData");
-        assert_eq!(data.uname, "uname");
-        assert_eq!(data.pwd, "password");
+    fn signindata_getters_work_correctly() {
+        let test_uname = "test";
+        let test_pwd = "testpwd1";
 
-        let data = SigninData::new("uname", "pass");
-        if let Err(errors) = data {
-            assert_eq!(errors, &[Error::PwdInvalid]);
-        } else {
-            panic!("SigninData should return Errors");
+        let data = SigninData {
+            uname: test_uname,
+            pwd: test_pwd,
+        };
+
+        assert_eq!(data.uname(), test_uname);
+        assert_eq!(data.pwd(), test_pwd);
+    }
+
+    #[test]
+    fn signindata_validate_works_correctly() {
+        let test_uname = "test";
+        let test_pwd = "testpwd1";
+        let data = SigninData {
+            uname: test_uname,
+            pwd: test_pwd,
+        };
+
+        if let Err(err) = data.validate() {
+            panic!(format!("Err: {:?}", err))
+        }
+
+        let test_pwd = "t";
+        let data = SigninData {
+            uname: test_uname,
+            pwd: test_pwd,
+        };
+
+        match data.validate() {
+            Ok(_) => panic!("Password is invalid"),
+            Err(err) => assert_eq!(err, Error::PwdInvalid),
         }
     }
 }
