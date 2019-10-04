@@ -120,7 +120,7 @@ mod tests {
         };
 
         if let Err(err) = data.validate() {
-            panic!(format!("Err: {:?}", err))
+            panic!(format!("Err: {:?}", err));
         }
 
         let test_email = "test@";
