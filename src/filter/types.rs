@@ -1,7 +1,7 @@
 use crate::consts::{RGX_ALPHA, RGX_NUM};
-use crate::error::Error;
 use std::fmt;
 
+#[derive(Debug)]
 pub enum MoviesFilters<'m> {
     Alpha(&'m str, String),
     Alphas(&'m str, Vec<&'m str>),
@@ -45,20 +45,41 @@ mod tests {
     use super::*;
 
     #[test]
-    fn moviesfilters_new_is_valid() {
-        let test_filter = "release_country:uS";
-        let test_moviesfilters = MoviesFilters::new(test_filter);
-
-        match test_moviesfilters {
-            Ok(test_moviesfilters) => match test_moviesfilters {
-                MoviesFilters::Alpha(k, v) => {
-                    let test_filter = test_filter.split(":").collect::<Vec<&str>>();
-                    assert_eq!(k, test_filter[0]);
-                    assert_eq!(v, test_filter[1].to_uppercase());
-                }
-                _ => panic!("Error, wrong variant"),
-            },
-            Err(error) => panic!("{:?}", error),
+    fn moviesfilters_new_works_correctly() {
+        let mf = MoviesFilters::new("release_country:Us");
+        if let MoviesFilters::Alpha(k, v) = mf {
+            assert_eq!(k, "release_country");
+            assert_eq!(v, "US");
+        } else {
+            panic!("Err: {:?}", mf);
         }
+
+        let mf = MoviesFilters::new("genres:Action|Advanture");
+        if let MoviesFilters::Alphas(k, v) = mf {
+            assert_eq!(k, "genres");
+            assert_eq!(v, vec!["Action", "Advanture"]);
+        } else {
+            panic!("Err: {:?}", mf);
+        }
+
+        let mf = MoviesFilters::new("writers:1|2|3");
+        if let MoviesFilters::Nums(k, v) = mf {
+            assert_eq!(k, "writers");
+            assert_eq!(v, vec!["1", "2", "3"]);
+        } else {
+            panic!("Err: {:?}", mf);
+        }
+    }
+
+    #[test]
+    fn moviesfilters_display_formatter() {
+        let mf = MoviesFilters::new("release_country:Us");
+        assert_eq!(mf.to_string(), "release_country = 'US'");
+
+        let mf = MoviesFilters::new("genres:Action|Advanture");
+        assert_eq!(mf.to_string(), "genres @> '{Action, Advanture}'");
+
+        let mf = MoviesFilters::new("writers:1|2|3");
+        assert_eq!(mf.to_string(), "writers @> '{1, 2, 3}'");
     }
 }
