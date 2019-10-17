@@ -14,6 +14,13 @@ pub struct SigninData<'s> {
     pwd: &'s str,
 }
 
+#[derive(Deserialize)]
+pub struct RateData<'r> {
+    token: &'r str,
+    movie_id: i32,
+    user_rating: i16,
+}
+
 impl<'s> SignupData<'s> {
     pub fn uname(&self) -> &'s str {
         self.uname
@@ -83,6 +90,40 @@ impl<'s> SigninData<'s> {
             Ok(())
         } else {
             Err(Error::PwdInvalid)
+        }
+    }
+}
+
+impl<'r> RateData<'r> {
+    pub fn token(&self) -> &'r str {
+        self.token
+    }
+    pub fn movie_id(&self) -> i32 {
+        self.movie_id
+    }
+    pub fn user_rating(&self) -> i16 {
+        self.user_rating
+    }
+
+    pub fn validate(&self) -> Result<&Self, Error> {
+        self.validate_movie_id()?;
+        self.validate_user_rating()?;
+
+        Ok(self)
+    }
+
+    fn validate_movie_id(&self) -> Result<(), Error> {
+        if self.movie_id() >= 1 {
+            Ok(())
+        } else {
+            Err(Error::DataInvalid)
+        }
+    }
+    fn validate_user_rating(&self) -> Result<(), Error> {
+        if self.user_rating() >= 1 && self.user_rating() <= 5 {
+            Ok(())
+        } else {
+            Err(Error::DataInvalid)
         }
     }
 }
@@ -172,6 +213,51 @@ mod tests {
         match data.validate() {
             Ok(_) => panic!("Password is invalid"),
             Err(err) => assert_eq!(err, Error::PwdInvalid),
+        }
+    }
+
+    #[test]
+    fn ratedata_getters_work_correctly() {
+        let test_token = "token";
+        let test_movie_id = 1;
+        let test_user_rating = 4;
+
+        let data = RateData {
+            token: test_token,
+            movie_id: test_movie_id,
+            user_rating: test_user_rating,
+        };
+
+        assert_eq!(data.token(), test_token);
+        assert_eq!(data.movie_id(), test_movie_id);
+        assert_eq!(data.user_rating(), test_user_rating);
+    }
+
+    #[test]
+    fn ratedata_validate_works_correctly() {
+        let test_token = "token";
+        let test_movie_id = 1;
+        let test_user_rating = 4;
+        let data = RateData {
+            token: test_token,
+            movie_id: test_movie_id,
+            user_rating: test_user_rating,
+        };
+
+        if let Err(err) = data.validate() {
+            panic!(format!("Err: {:?}", err))
+        }
+
+        let test_user_rating = 6;
+        let data = RateData {
+            token: test_token,
+            movie_id: test_movie_id,
+            user_rating: test_user_rating,
+        };
+
+        match data.validate() {
+            Ok(_) => panic!("User-rating is invalid"),
+            Err(err) => assert_eq!(err, Error::DataInvalid),
         }
     }
 }
