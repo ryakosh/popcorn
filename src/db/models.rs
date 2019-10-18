@@ -38,7 +38,8 @@ pub struct Movie {
     pub release_country: String,
     pub release_date: NaiveDate,
     pub duration: i16,
-    pub score: f32,
+    pub rating: f32,
+    pub rating_count: i32,
 }
 
 #[table_name = "movies"]

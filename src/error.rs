@@ -20,6 +20,7 @@ pub enum Error {
     PageInvalid,
 
     NotFound,
+    DataInvalid,
 
     FilterInvalid,
 

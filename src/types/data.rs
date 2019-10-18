@@ -15,8 +15,10 @@ pub struct SigninData<'s> {
 }
 
 #[derive(Deserialize)]
-pub struct RateData {
-    rating: i32,
+pub struct RateData<'r> {
+    token: &'r str,
+    movie_id: i32,
+    user_rating: i16,
 }
 
 impl<'s> SignupData<'s> {
@@ -92,16 +94,36 @@ impl<'s> SigninData<'s> {
     }
 }
 
-impl RateData {
-    pub fn rating(&self) -> i32 {
-        self.rating
+impl<'r> RateData<'r> {
+    pub fn token(&self) -> &'r str {
+        self.token
+    }
+    pub fn movie_id(&self) -> i32 {
+        self.movie_id
+    }
+    pub fn user_rating(&self) -> i16 {
+        self.user_rating
     }
 
     pub fn validate(&self) -> Result<&Self, Error> {
-        if self.rating >= 0 && self.rating <= 5 {
-            Ok(self)
+        self.validate_movie_id()?;
+        self.validate_user_rating()?;
+
+        Ok(self)
+    }
+
+    fn validate_movie_id(&self) -> Result<(), Error> {
+        if self.movie_id() >= 1 {
+            Ok(())
         } else {
-            Err(Error::InputInvalid)
+            Err(Error::DataInvalid)
+        }
+    }
+    fn validate_user_rating(&self) -> Result<(), Error> {
+        if self.user_rating() >= 1 && self.user_rating() <= 5 {
+            Ok(())
+        } else {
+            Err(Error::DataInvalid)
         }
     }
 }
@@ -111,32 +133,131 @@ mod tests {
     use super::*;
 
     #[test]
-    fn signupdata_new_is_valid() {
-        let data = SignupData::new("uname", "password", "example@example.com")
-            .expect("Error instantiating SignupData");
-        assert_eq!(data.uname, "uname");
-        assert_eq!(data.pwd, "password");
-        assert_eq!(data.email, "example@example.com");
+    fn signupdata_getters_work_correctly() {
+        let test_uname = "test";
+        let test_pwd = "testpwd1";
+        let test_email = "test@test.test";
 
-        let data = SignupData::new("uname", "pass", "example@example");
-        if let Err(errors) = data {
-            assert_eq!(errors, &[Error::PwdInvalid, Error::EmailInvalid]);
-        } else {
-            panic!("SignupData should return Errors");
+        let data = SignupData {
+            uname: test_uname,
+            pwd: test_pwd,
+            email: test_email,
+        };
+
+        assert_eq!(data.uname(), test_uname);
+        assert_eq!(data.pwd(), test_pwd);
+        assert_eq!(data.email(), test_email);
+    }
+
+    #[test]
+    fn signupdata_validate_works_correctly() {
+        let test_uname = "test";
+        let test_pwd = "testpwd1";
+        let test_email = "test@test.test";
+        let data = SignupData {
+            uname: test_uname,
+            pwd: test_pwd,
+            email: test_email,
+        };
+
+        if let Err(err) = data.validate() {
+            panic!(format!("Err: {:?}", err));
+        }
+
+        let test_email = "test@";
+        let data = SignupData {
+            uname: test_uname,
+            pwd: test_pwd,
+            email: test_email,
+        };
+
+        match data.validate() {
+            Ok(_) => panic!("Email is invalid"),
+            Err(err) => assert_eq!(err, Error::EmailInvalid),
         }
     }
 
     #[test]
-    fn signindata_new_is_valid() {
-        let data = SigninData::new("uname", "password").expect("Error instantiating SigninData");
-        assert_eq!(data.uname, "uname");
-        assert_eq!(data.pwd, "password");
+    fn signindata_getters_work_correctly() {
+        let test_uname = "test";
+        let test_pwd = "testpwd1";
 
-        let data = SigninData::new("uname", "pass");
-        if let Err(errors) = data {
-            assert_eq!(errors, &[Error::PwdInvalid]);
-        } else {
-            panic!("SigninData should return Errors");
+        let data = SigninData {
+            uname: test_uname,
+            pwd: test_pwd,
+        };
+
+        assert_eq!(data.uname(), test_uname);
+        assert_eq!(data.pwd(), test_pwd);
+    }
+
+    #[test]
+    fn signindata_validate_works_correctly() {
+        let test_uname = "test";
+        let test_pwd = "testpwd1";
+        let data = SigninData {
+            uname: test_uname,
+            pwd: test_pwd,
+        };
+
+        if let Err(err) = data.validate() {
+            panic!(format!("Err: {:?}", err))
+        }
+
+        let test_pwd = "t";
+        let data = SigninData {
+            uname: test_uname,
+            pwd: test_pwd,
+        };
+
+        match data.validate() {
+            Ok(_) => panic!("Password is invalid"),
+            Err(err) => assert_eq!(err, Error::PwdInvalid),
+        }
+    }
+
+    #[test]
+    fn ratedata_getters_work_correctly() {
+        let test_token = "token";
+        let test_movie_id = 1;
+        let test_user_rating = 4;
+
+        let data = RateData {
+            token: test_token,
+            movie_id: test_movie_id,
+            user_rating: test_user_rating,
+        };
+
+        assert_eq!(data.token(), test_token);
+        assert_eq!(data.movie_id(), test_movie_id);
+        assert_eq!(data.user_rating(), test_user_rating);
+    }
+
+    #[test]
+    fn ratedata_validate_works_correctly() {
+        let test_token = "token";
+        let test_movie_id = 1;
+        let test_user_rating = 4;
+        let data = RateData {
+            token: test_token,
+            movie_id: test_movie_id,
+            user_rating: test_user_rating,
+        };
+
+        if let Err(err) = data.validate() {
+            panic!(format!("Err: {:?}", err))
+        }
+
+        let test_user_rating = 6;
+        let data = RateData {
+            token: test_token,
+            movie_id: test_movie_id,
+            user_rating: test_user_rating,
+        };
+
+        match data.validate() {
+            Ok(_) => panic!("User-rating is invalid"),
+            Err(err) => assert_eq!(err, Error::DataInvalid),
         }
     }
 }

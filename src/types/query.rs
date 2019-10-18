@@ -96,27 +96,52 @@ mod tests {
     use super::*;
 
     #[test]
-    fn moviesquery_new_is_valid() {
+    fn moviesquery_getters_work_correctly() {
         let test_search = Some(String::from("test"));
-        let test_limit = Some(5);
-        let test_page = Some(3);
-        let test_filters = Some(String::from("genres:Adventure|Action,release_country:US"));
-
-        let test_moviesquery = MoviesQuery::new(
-            test_search.clone(),
-            test_limit,
-            test_page,
-            test_filters.clone(),
-        );
-
-        match test_moviesquery {
-            Ok(test_moviesquery) => {
-                assert_eq!(test_search, test_moviesquery.search);
-                assert_eq!(test_limit, test_moviesquery.limit);
-                assert_eq!(test_page, test_moviesquery.page);
-                assert_eq!(test_filters, test_moviesquery.filters);
-            }
-            Err(Errors) => panic!("{:?}", Errors),
+        let test_limit = Some(4);
+        let test_page = None;
+        let test_filters = Some(String::from("release_country:US,genres:Action|Advanture"));
+        let query = MoviesQuery {
+            search: test_search.clone(),
+            limit: test_limit.clone(),
+            page: test_page.clone(),
+            filters: test_filters.clone(),
         };
+
+        assert_eq!(query.search(), test_search.as_ref());
+        assert_eq!(query.limit(), test_limit);
+        assert_eq!(query.page(), test_page);
+        assert_eq!(query.filters(), test_filters.as_ref());
+    }
+
+    #[test]
+    fn moviesquery_validate_works_correctly() {
+        let test_search = Some(String::from("test"));
+        let test_limit = Some(4);
+        let test_page = None;
+        let test_filters = Some(String::from("release_country:US,genres:Action|Advanture"));
+        let query = MoviesQuery {
+            search: test_search.clone(),
+            limit: test_limit.clone(),
+            page: test_page.clone(),
+            filters: test_filters.clone(),
+        };
+
+        if let Err(err) = query.validate() {
+            panic!(format!("Err: {:?}", err));
+        }
+
+        let test_limit = Some(30);
+        let query = MoviesQuery {
+            search: test_search.clone(),
+            limit: test_limit.clone(),
+            page: test_page.clone(),
+            filters: test_filters.clone(),
+        };
+
+        match query.validate() {
+            Ok(_) => panic!("Limit is invalid"),
+            Err(err) => assert_eq!(err, Error::LimitInvalid),
+        }
     }
 }
