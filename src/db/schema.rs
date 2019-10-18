@@ -54,14 +54,6 @@ table! {
 }
 
 table! {
-    ratings (user_id, movie_id) {
-        user_id -> Varchar,
-        movie_id -> Int4,
-        rating -> Int4,
-    }
-}
-
-table! {
     users (id) {
         id -> Varchar,
         email -> Varchar,

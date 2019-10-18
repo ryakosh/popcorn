@@ -1,1 +1,0 @@
-ALTER TABLE movies DROP COLUMN score;

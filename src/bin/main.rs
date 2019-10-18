@@ -29,7 +29,6 @@ fn main() {
             routes![
                 routes::signup,
                 routes::signin,
-                routes::rate,
                 routes::movies,
                 routes::movie,
             ],
