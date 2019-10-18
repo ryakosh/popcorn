@@ -54,6 +54,14 @@ table! {
 }
 
 table! {
+    ratings (user_id, movie_id) {
+        user_id -> Varchar,
+        movie_id -> Int4,
+        rating -> Int4,
+    }
+}
+
+table! {
     users (id) {
         id -> Varchar,
         email -> Varchar,
@@ -85,6 +93,7 @@ allow_tables_to_appear_in_same_query!(
     movies_artists,
     movies_directors,
     movies_writers,
+    ratings,
     users,
     users_ratings,
     writers,

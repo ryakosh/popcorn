@@ -4,17 +4,18 @@ use std::time::{Duration, SystemTime};
 
 pub mod data;
 pub mod query;
+pub mod req_guards;
 pub mod res;
 
 #[derive(Serialize, Deserialize)]
 pub struct Claims {
-    iss: String,
-    iat: u64,
-    sub: String,
-    exp: u64,
+    pub iss: String,
+    pub iat: u64,
+    pub sub: String,
+    pub exp: u64,
 }
 
-#[derive(Serialize)]
+#[derive(Serialize, Debug)]
 pub struct Response<T: Serialize> {
     pub payload: Option<T>,
     pub error: Option<Error>,

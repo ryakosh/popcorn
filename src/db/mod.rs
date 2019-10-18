@@ -7,11 +7,14 @@ use crate::diesel::prelude::*;
 use crate::error::Error;
 use crate::filter::filter_movies;
 use crate::jsonwebtoken::{encode, Header};
-use crate::types::data::{SigninData, SignupData};
+use crate::types::data::{RateData, SigninData, SignupData};
 use crate::types::query::MoviesQuery;
+use crate::types::req_guards::ClaimedUser;
 use crate::types::Claims;
-use models::{Artist, Director, Movie, MovieCompact, User, Writer};
-use schema::{artists, directors, movies_artists, movies_directors, movies_writers, writers};
+use models::{Artist, Director, Movie, MovieCompact, NewRating, User, Writer};
+use schema::{
+    artists, directors, movies, movies_artists, movies_directors, movies_writers, ratings, writers,
+};
 use std::env::var;
 
 fn connect(conn_str: &str) -> PgConnection {
@@ -70,6 +73,41 @@ pub fn signin(signin_data: &SigninData) -> Result<String, Error> {
     } else {
         Err(Error::UserNFound)
     }
+}
+
+pub fn rate(claimed_user: &ClaimedUser, movie_id: i32, rate_data: &RateData) -> Result<(), Error> {
+    let conn = connect(&var("DATABASE_URL").expect("Can't find DATABASE_URL environment variable"));
+    let rate_data = rate_data.validate()?;
+
+    conn.build_transaction()
+        .run::<_, diesel::result::Error, _>(|| {
+            let new_rating = NewRating {
+                user_id: claimed_user.uname().to_string(),
+                movie_id: movie_id,
+                rating: rate_data.rating(),
+            };
+
+            diesel::insert_into(ratings::table)
+                .values(&new_rating)
+                .execute(&conn)
+                .expect("Error executing query");
+
+            let count: i64 = ratings::table
+                .select(diesel::dsl::count(ratings::user_id))
+                .first(&conn)
+                .expect("Error executing query");
+
+            diesel::update(movies::table.find(movie_id))
+                .set(movies::score.eq(((movies::score * (count - 1) as f32)
+                    + rate_data.rating() as f32)
+                    / count as f32))
+                .execute(&conn)
+                .expect("Error executing query");
+
+            Ok(())
+        });
+
+    Ok(())
 }
 
 pub fn movies(movies_query: &MoviesQuery) -> Result<Vec<MovieCompact>, Error> {

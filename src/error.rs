@@ -1,6 +1,9 @@
 #[derive(Serialize, Debug, PartialEq)]
 pub enum Error {
     UserNFound,
+    AuthRequired,
+    AuthorizationInvalid,
+    TokenInvalid,
 
     UnameTaken,
     UnameInvalid,
@@ -20,4 +23,6 @@ pub enum Error {
     DataInvalid,
 
     FilterInvalid,
+
+    InputInvalid,
 }
