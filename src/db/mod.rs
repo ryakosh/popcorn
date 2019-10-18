@@ -11,9 +11,9 @@ use crate::types::data::{SigninData, SignupData};
 use crate::types::query::MoviesQuery;
 use crate::types::req_guards::ClaimedUser;
 use crate::types::Claims;
-use models::{Artist, Director, Movie, MovieCompact, NewRating, User, Writer};
+use models::{Artist, Director, Movie, MovieCompact, User, Writer};
 use schema::{
-    artists, directors, movies, movies_artists, movies_directors, movies_writers, ratings, writers,
+    artists, directors, movies, movies_artists, movies_directors, movies_writers, writers,
 };
 use std::env::var;
 

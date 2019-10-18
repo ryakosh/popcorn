@@ -85,7 +85,6 @@ allow_tables_to_appear_in_same_query!(
     movies_artists,
     movies_directors,
     movies_writers,
-    ratings,
     users,
     users_ratings,
     writers,
