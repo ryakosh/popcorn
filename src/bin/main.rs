@@ -31,7 +31,8 @@ fn main() {
                 routes::signin,
                 routes::movies,
                 routes::movie,
-                routes::movie_rate,
+                routes::create_movie_rate,
+                routes::update_movie_rate,
             ],
         )
         .attach(cors)

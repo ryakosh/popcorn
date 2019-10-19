@@ -21,6 +21,7 @@ pub enum Error {
 
     NotFound,
     DataInvalid,
+    EntryDNExist,
 
     FilterInvalid,
 

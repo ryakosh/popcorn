@@ -58,12 +58,26 @@ pub fn movie(
 }
 
 #[post("/movies/<id>/rate", data = "<rate_data>", format = "json")]
-pub fn movie_rate(
+pub fn create_movie_rate(
     claimed_user: ClaimedUser,
     id: i32,
     rate_data: Json<RateData>,
 ) -> Result<Json<Response<String>>, status::BadRequest<Json<Response<String>>>> {
-    let result = db::movie_rate(id, &claimed_user, &rate_data);
+    let result = db::create_movie_rate(id, &claimed_user, &rate_data);
+
+    match result {
+        Ok(()) => Ok(Json(Response::new())),
+        Err(error) => Err(status::BadRequest(Some(Json(Response::with_error(error))))),
+    }
+}
+
+#[put("/movies/<id>/rate", data = "<rate_data>", format = "json")]
+pub fn update_movie_rate(
+    claimed_user: ClaimedUser,
+    id: i32,
+    rate_data: Json<RateData>,
+) -> Result<Json<Response<String>>, status::BadRequest<Json<Response<String>>>> {
+    let result = db::update_movie_rate(id, &claimed_user, &rate_data);
 
     match result {
         Ok(()) => Ok(Json(Response::new())),
