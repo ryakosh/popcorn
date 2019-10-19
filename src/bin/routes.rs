@@ -84,3 +84,16 @@ pub fn update_movie_rate(
         Err(error) => Err(status::BadRequest(Some(Json(Response::with_error(error))))),
     }
 }
+
+#[delete("/movies/<id>/rate")]
+pub fn delete_movie_rate(
+    claimed_user: ClaimedUser,
+    id: i32,
+) -> Result<Json<Response<String>>, status::BadRequest<Json<Response<String>>>> {
+    let result = db::delete_movie_rate(id, &claimed_user);
+
+    match result {
+        Ok(()) => Ok(Json(Response::new())),
+        Err(error) => Err(status::BadRequest(Some(Json(Response::with_error(error))))),
+    }
+}
