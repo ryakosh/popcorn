@@ -63,7 +63,7 @@ table! {
 
 table! {
     users_ratings (user_id, movie_id) {
-        user_id -> Int4,
+        user_id -> Varchar,
         movie_id -> Int4,
         user_rating -> Int2,
     }

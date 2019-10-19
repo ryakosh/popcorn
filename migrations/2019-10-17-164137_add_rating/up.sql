@@ -1,5 +1,5 @@
 CREATE TABLE users_ratings (
-    user_id INTEGER NOT NULL,
+    user_id VARCHAR(30) NOT NULL,
     movie_id INTEGER NOT NULL,
     user_rating SMALLINT NOT NULL,
     PRIMARY KEY(user_id, movie_id)

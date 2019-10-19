@@ -1,6 +1,6 @@
 use popcorn::db;
 use popcorn::db::models::MovieCompact;
-use popcorn::types::data::{SigninData, SignupData};
+use popcorn::types::data::{RateData, SigninData, SignupData};
 use popcorn::types::query::MoviesQuery;
 use popcorn::types::req_guards::ClaimedUser;
 use popcorn::types::res::{MovieRes, SigninRes};
@@ -53,6 +53,20 @@ pub fn movie(
         Ok(result) => Ok(Json(Response::with_payload(MovieRes::new(
             result.0, result.1, result.2, result.3,
         )))),
+        Err(error) => Err(status::BadRequest(Some(Json(Response::with_error(error))))),
+    }
+}
+
+#[post("/movies/<id>/rate", data = "<rate_data>", format = "json")]
+pub fn movie_rate(
+    claimed_user: ClaimedUser,
+    id: i32,
+    rate_data: Json<RateData>,
+) -> Result<Json<Response<String>>, status::BadRequest<Json<Response<String>>>> {
+    let result = db::movie_rate(id, &claimed_user, &rate_data);
+
+    match result {
+        Ok(()) => Ok(Json(Response::new())),
         Err(error) => Err(status::BadRequest(Some(Json(Response::with_error(error))))),
     }
 }

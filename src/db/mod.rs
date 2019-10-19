@@ -4,14 +4,15 @@ pub mod schema;
 use crate::config::CONFIG;
 use crate::diesel;
 use crate::diesel::prelude::*;
+use crate::diesel::result;
 use crate::error::Error;
 use crate::filter::filter_movies;
 use crate::jsonwebtoken::{encode, Header};
-use crate::types::data::{SigninData, SignupData};
+use crate::types::data::{RateData, SigninData, SignupData};
 use crate::types::query::MoviesQuery;
 use crate::types::req_guards::ClaimedUser;
 use crate::types::Claims;
-use models::{Artist, Director, Movie, MovieCompact, User, Writer};
+use models::{Artist, Director, Movie, MovieCompact, NewUserRating, User, Writer};
 use schema::{
     artists, directors, movies, movies_artists, movies_directors, movies_writers, writers,
 };
@@ -141,5 +142,54 @@ pub fn movie(id: i32) -> Result<(Movie, Vec<Writer>, Vec<Director>, Vec<Artist>)
     match (movie, ws, ds, ats) {
         (Ok(movie), Ok(ws), Ok(ds), Ok(ats)) => Ok((movie, ws, ds, ats)),
         _ => Err(Error::NotFound),
+    }
+}
+
+pub fn movie_rate(
+    movie_id: i32,
+    claimed_user: &ClaimedUser,
+    rate_data: &RateData,
+) -> Result<(), Error> {
+    use schema::{movies, users, users_ratings};
+
+    let conn = connect(&var("DATABASE_URL").expect("Can't find DATABASE_URL environment variable"));
+
+    if let Ok(user_id) = users::table
+        .find(claimed_user.uname())
+        .select(users::id)
+        .get_result::<String>(&conn)
+    {
+        let rate_data = rate_data.validate()?;
+
+        conn.transaction::<_, result::Error, _>(|| {
+            let user_rating = NewUserRating {
+                user_id,
+                movie_id,
+                user_rating: rate_data.user_rating(),
+            };
+            let rc: (f32, i32) = movies::table // Rating and rating_count
+                .find(movie_id)
+                .select((movies::rating, movies::rating_count))
+                .first(&conn)?;
+            let new_rating =
+                ((rc.0 * rc.1 as f32) + rate_data.user_rating() as f32) / (rc.1 + 1) as f32;
+            diesel::insert_into(users_ratings::table)
+                .values(&user_rating)
+                .execute(&conn)?;
+
+            diesel::update(movies::table.find(movie_id))
+                .set((
+                    movies::rating.eq(new_rating),
+                    movies::rating_count.eq(rc.1 + 1),
+                ))
+                .execute(&conn)?;
+
+            Ok(())
+        })
+        .expect("Error executing transaction");
+
+        Ok(())
+    } else {
+        Err(Error::UserNFound)
     }
 }
