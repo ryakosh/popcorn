@@ -27,14 +27,14 @@ fn main() {
         .mount(
             "/popcorn",
             routes![
-                routes::signup,
-                routes::signin,
+                routes::auth::signup,
+                routes::auth::signin,
                 routes::movies,
                 routes::movie,
-                routes::get_user_rating,
-                routes::create_movie_rate,
-                routes::update_movie_rate,
-                routes::delete_movie_rate,
+                routes::movie_rate::get_user_rating,
+                routes::movie_rate::create_movie_rate,
+                routes::movie_rate::update_movie_rate,
+                routes::movie_rate::delete_movie_rate,
             ],
         )
         .attach(cors)

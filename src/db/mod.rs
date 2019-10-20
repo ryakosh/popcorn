@@ -1,6 +1,6 @@
 pub mod auth;
-pub mod crud;
 pub mod models;
+pub mod movie_rate;
 pub mod schema;
 
 use crate::diesel::{self, prelude::*};
