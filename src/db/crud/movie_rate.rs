@@ -1,12 +1,8 @@
-use crate::db::connect;
-use crate::db::models::NewUserRating;
 use crate::db::schema::{movies, users, users_ratings};
-use crate::diesel;
-use crate::diesel::prelude::*;
-use crate::diesel::result;
+use crate::db::{connect, models::NewUserRating};
+use crate::diesel::{self, prelude::*, result};
 use crate::error::Error;
-use crate::types::data::RateData;
-use crate::types::req_guards::ClaimedUser;
+use crate::types::{data::RateData, req_guards::ClaimedUser};
 use std::env::var;
 
 pub fn create_movie_rate(

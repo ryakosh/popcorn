@@ -1,13 +1,12 @@
-use super::connect;
-use super::models::User;
-use super::schema::users;
+use super::{connect, models::User, schema::users};
 use crate::config::CONFIG;
-use crate::diesel;
-use crate::diesel::prelude::*;
+use crate::diesel::{self, prelude::*};
 use crate::error::Error;
 use crate::jsonwebtoken::{encode, Header};
-use crate::types::data::{SigninData, SignupData};
-use crate::types::Claims;
+use crate::types::{
+    data::{SigninData, SignupData},
+    Claims,
+};
 use std::env::var;
 
 pub fn signup(signup_data: &SignupData) -> Result<(), Error> {

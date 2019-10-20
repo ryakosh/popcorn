@@ -1,7 +1,5 @@
 use crate::jsonwebtoken::{decode, Algorithm, Validation};
-use crate::rocket;
-use crate::rocket::http;
-use crate::rocket::request;
+use crate::rocket::{self, http, request};
 
 use crate::config::CONFIG;
 use crate::error;

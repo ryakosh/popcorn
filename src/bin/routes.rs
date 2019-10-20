@@ -1,14 +1,8 @@
-use popcorn::db;
-use popcorn::db::auth;
-use popcorn::db::crud;
-use popcorn::db::models::MovieCompact;
+use popcorn::db::{self, auth, crud, models::MovieCompact};
 use popcorn::types::data::{RateData, SigninData, SignupData};
-use popcorn::types::query::MoviesQuery;
-use popcorn::types::req_guards::ClaimedUser;
 use popcorn::types::res::{MovieRes, SigninRes};
-use popcorn::types::Response;
-use rocket::request::Form;
-use rocket::response::status;
+use popcorn::types::{query::MoviesQuery, req_guards::ClaimedUser, Response};
+use rocket::{request::Form, response::status};
 use rocket_contrib::json::Json;
 
 #[post("/auth/signup", data = "<signup_data>", format = "json")]

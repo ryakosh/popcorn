@@ -3,8 +3,7 @@ pub mod crud;
 pub mod models;
 pub mod schema;
 
-use crate::diesel;
-use crate::diesel::prelude::*;
+use crate::diesel::{self, prelude::*};
 use crate::error::Error;
 use crate::filter::filter_movies;
 use crate::types::query::MoviesQuery;
