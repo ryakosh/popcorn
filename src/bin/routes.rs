@@ -1,6 +1,6 @@
 use popcorn::db::{self, auth, crud, models::MovieCompact};
 use popcorn::types::data::{RateData, SigninData, SignupData};
-use popcorn::types::res::{MovieRes, SigninRes};
+use popcorn::types::res::{MovieRes, SigninRes, UserRatingRes};
 use popcorn::types::{query::MoviesQuery, req_guards::ClaimedUser, Response};
 use rocket::{request::Form, response::status};
 use rocket_contrib::json::Json;
@@ -49,6 +49,19 @@ pub fn movie(
         Ok(result) => Ok(Json(Response::with_payload(MovieRes::new(
             result.0, result.1, result.2, result.3,
         )))),
+        Err(error) => Err(status::BadRequest(Some(Json(Response::with_error(error))))),
+    }
+}
+
+#[get("/movies/<id>/rate")]
+pub fn get_user_rating(
+    claimed_user: ClaimedUser,
+    id: i32,
+) -> Result<Json<Response<UserRatingRes>>, status::BadRequest<Json<Response<String>>>> {
+    let result = crud::movie_rate::get_user_rating(id, &claimed_user);
+
+    match result {
+        Ok(user_rating) => Ok(Json(Response::with_payload(UserRatingRes { user_rating }))),
         Err(error) => Err(status::BadRequest(Some(Json(Response::with_error(error))))),
     }
 }

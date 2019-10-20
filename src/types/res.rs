@@ -22,6 +22,11 @@ pub struct MovieRes {
     pub stars: Vec<String>,
 }
 
+#[derive(Serialize)]
+pub struct UserRatingRes {
+    pub user_rating: i16,
+}
+
 impl MovieRes {
     pub fn new(
         movie: Movie,

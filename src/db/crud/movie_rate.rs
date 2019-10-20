@@ -5,6 +5,18 @@ use crate::error::Error;
 use crate::types::{data::RateData, req_guards::ClaimedUser};
 use std::env::var;
 
+pub fn get_user_rating(movie_id: i32, claimed_user: &ClaimedUser) -> Result<i16, Error> {
+    let conn = connect(&var("DATABASE_URL").expect("Can't find DATABASE_URL environment variable"));
+    let user_id = get_user_id(claimed_user, &conn)?;
+
+    users_ratings::table
+        .filter(users_ratings::user_id.eq(user_id))
+        .filter(users_ratings::movie_id.eq(movie_id))
+        .select(users_ratings::user_rating)
+        .get_result(&conn)
+        .map_err(|_| Error::EntryDNExist)
+}
+
 pub fn create_movie_rate(
     movie_id: i32,
     claimed_user: &ClaimedUser,

@@ -31,6 +31,7 @@ fn main() {
                 routes::signin,
                 routes::movies,
                 routes::movie,
+                routes::get_user_rating,
                 routes::create_movie_rate,
                 routes::update_movie_rate,
                 routes::delete_movie_rate,
