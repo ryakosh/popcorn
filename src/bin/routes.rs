@@ -1,4 +1,5 @@
 use popcorn::db;
+use popcorn::db::auth;
 use popcorn::db::crud;
 use popcorn::db::models::MovieCompact;
 use popcorn::types::data::{RateData, SigninData, SignupData};
@@ -14,7 +15,7 @@ use rocket_contrib::json::Json;
 pub fn signup(
     signup_data: Json<SignupData>,
 ) -> Result<Json<Response<String>>, status::BadRequest<Json<Response<String>>>> {
-    let result = db::signup(&signup_data.0);
+    let result = auth::signup(&signup_data.0);
 
     match result {
         Ok(()) => Ok(Json(Response::new())),
@@ -26,7 +27,7 @@ pub fn signup(
 pub fn signin(
     signin_data: Json<SigninData>,
 ) -> Result<Json<Response<SigninRes>>, status::BadRequest<Json<Response<String>>>> {
-    let result = db::signin(&signin_data.0);
+    let result = auth::signin(&signin_data.0);
 
     match result {
         Ok(token) => Ok(Json(Response::with_payload(SigninRes { token }))),
