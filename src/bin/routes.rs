@@ -1,4 +1,5 @@
 use popcorn::db;
+use popcorn::db::crud;
 use popcorn::db::models::MovieCompact;
 use popcorn::types::data::{RateData, SigninData, SignupData};
 use popcorn::types::query::MoviesQuery;
@@ -63,7 +64,7 @@ pub fn create_movie_rate(
     id: i32,
     rate_data: Json<RateData>,
 ) -> Result<Json<Response<String>>, status::BadRequest<Json<Response<String>>>> {
-    let result = db::create_movie_rate(id, &claimed_user, &rate_data);
+    let result = crud::movie_rate::create_movie_rate(id, &claimed_user, &rate_data);
 
     match result {
         Ok(()) => Ok(Json(Response::new())),
@@ -77,7 +78,7 @@ pub fn update_movie_rate(
     id: i32,
     rate_data: Json<RateData>,
 ) -> Result<Json<Response<String>>, status::BadRequest<Json<Response<String>>>> {
-    let result = db::update_movie_rate(id, &claimed_user, &rate_data);
+    let result = crud::movie_rate::update_movie_rate(id, &claimed_user, &rate_data);
 
     match result {
         Ok(()) => Ok(Json(Response::new())),
@@ -90,7 +91,7 @@ pub fn delete_movie_rate(
     claimed_user: ClaimedUser,
     id: i32,
 ) -> Result<Json<Response<String>>, status::BadRequest<Json<Response<String>>>> {
-    let result = db::delete_movie_rate(id, &claimed_user);
+    let result = crud::movie_rate::delete_movie_rate(id, &claimed_user);
 
     match result {
         Ok(()) => Ok(Json(Response::new())),
