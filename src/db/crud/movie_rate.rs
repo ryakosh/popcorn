@@ -1,5 +1,5 @@
 use crate::db::schema::{movies, users, users_ratings};
-use crate::db::{connect, models::NewUserRating, auth::get_user_id};
+use crate::db::{auth::get_user_id, connect, models::NewUserRating};
 use crate::diesel::{self, prelude::*, result};
 use crate::error::Error;
 use crate::types::{data::RateData, req_guards::ClaimedUser};
