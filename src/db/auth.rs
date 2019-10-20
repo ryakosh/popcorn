@@ -6,6 +6,7 @@ use crate::jsonwebtoken::{encode, Header};
 use crate::types::{
     data::{SigninData, SignupData},
     Claims,
+    req_guards::ClaimedUser,
 };
 use std::env::var;
 
@@ -57,4 +58,12 @@ pub fn signin(signin_data: &SigninData) -> Result<String, Error> {
     } else {
         Err(Error::UserNFound)
     }
+}
+
+pub fn get_user_id(claimed_user: &ClaimedUser, conn: &PgConnection) -> Result<String, Error> {    
+    users::table
+        .find(claimed_user.uname())
+        .select(users::id)
+        .get_result(conn)
+        .map_err(|_| Error::UserNFound)
 }
