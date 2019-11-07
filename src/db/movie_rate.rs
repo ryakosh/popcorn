@@ -5,9 +5,9 @@ use crate::error::Error;
 use crate::types::{data::RateData, req_guards::ClaimedUser};
 use std::env::var;
 
-pub fn get_user_rating(movie_id: i32, claimed_user: &ClaimedUser) -> Result<i16, Error> {
+pub fn get_user_rating(movie_id: i32, cu: &ClaimedUser) -> Result<i16, Error> {
     let conn = connect(&var("DATABASE_URL").expect("Can't find DATABASE_URL environment variable"));
-    let user_id = get_user_id(claimed_user, &conn)?;
+    let user_id = get_user_id(&cu.uname(), &conn)?;
 
     users_ratings::table
         .filter(users_ratings::user_id.eq(user_id))
@@ -19,12 +19,12 @@ pub fn get_user_rating(movie_id: i32, claimed_user: &ClaimedUser) -> Result<i16,
 
 pub fn create_movie_rate(
     movie_id: i32,
-    claimed_user: &ClaimedUser,
+    cu: &ClaimedUser,
     rate_data: &RateData,
 ) -> Result<(), Error> {
     let conn = connect(&var("DATABASE_URL").expect("Can't find DATABASE_URL environment variable"));
 
-    let user_id = get_user_id(claimed_user, &conn)?;
+    let user_id = get_user_id(&cu.uname(), &conn)?;
     let rate_data = rate_data.validate()?;
 
     conn.transaction::<_, result::Error, _>(|| {
@@ -59,12 +59,12 @@ pub fn create_movie_rate(
 
 pub fn update_movie_rate(
     movie_id: i32,
-    claimed_user: &ClaimedUser,
+    cu: &ClaimedUser,
     rate_data: &RateData,
 ) -> Result<(), Error> {
     let conn = connect(&var("DATABASE_URL").expect("Can't find DATABASE_URL environment variable"));
 
-    let user_id = get_user_id(claimed_user, &conn)?;
+    let user_id = get_user_id(&cu.uname(), &conn)?;
     if let Ok(old_user_rating) = users_ratings::table
         .filter(users_ratings::user_id.eq(&user_id))
         .filter(users_ratings::movie_id.eq(movie_id))
@@ -104,10 +104,10 @@ pub fn update_movie_rate(
     }
 }
 
-pub fn delete_movie_rate(movie_id: i32, claimed_user: &ClaimedUser) -> Result<(), Error> {
+pub fn delete_movie_rate(movie_id: i32, cu: &ClaimedUser) -> Result<(), Error> {
     let conn = connect(&var("DATABASE_URL").expect("Can't find DATABASE_URL environment variable"));
 
-    let user_id = get_user_id(claimed_user, &conn)?;
+    let user_id = get_user_id(&cu.uname(), &conn)?;
     if let Ok(user_rating) = users_ratings::table
         .filter(users_ratings::user_id.eq(&user_id))
         .filter(users_ratings::movie_id.eq(movie_id))

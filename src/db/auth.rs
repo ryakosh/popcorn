@@ -60,9 +60,9 @@ pub fn signin(signin_data: &SigninData) -> Result<String, Error> {
     }
 }
 
-pub fn get_user_id(claimed_user: &ClaimedUser, conn: &PgConnection) -> Result<String, Error> {
+pub fn get_user_id(uname: &str, conn: &PgConnection) -> Result<String, Error> {
     users::table
-        .find(claimed_user.uname())
+        .find(uname)
         .select(users::id)
         .get_result(conn)
         .map_err(|_| Error::UserNFound)
