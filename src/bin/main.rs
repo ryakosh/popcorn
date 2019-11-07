@@ -2,6 +2,7 @@
 
 #[macro_use]
 extern crate rocket;
+#[macro_use] extern crate rocket_contrib;
 extern crate rocket_cors;
 
 use rocket::http::Method;
@@ -16,7 +17,7 @@ fn main() {
 
     let cors = rocket_cors::Cors {
         allowed_origins,
-        allowed_methods: vec![Method::Get, Method::Post]
+        allowed_methods: vec![Method::Get, Method::Post, Method::Put, Method::Delete]
             .into_iter()
             .map(From::from)
             .collect(),
@@ -35,6 +36,9 @@ fn main() {
                 routes::movie_rate::create_movie_rate,
                 routes::movie_rate::update_movie_rate,
                 routes::movie_rate::delete_movie_rate,
+                routes::movies_watchlist::is_movie_watchlisted,
+                routes::movies_watchlist::add_movie_to_watchlist,
+                routes::movies_watchlist::delete_movie_from_watchlist,
             ],
         )
         .attach(cors)

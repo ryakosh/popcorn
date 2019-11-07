@@ -70,6 +70,13 @@ table! {
 }
 
 table! {
+    users_watchlist (user_id, movie_id) {
+        user_id -> Varchar,
+        movie_id -> Int4,
+    }
+}
+
+table! {
     writers (writer_id) {
         writer_id -> Int4,
         first_name -> Varchar,
@@ -77,6 +84,9 @@ table! {
         gender -> Varchar,
     }
 }
+
+joinable!(users_watchlist -> movies (movie_id));
+joinable!(users_watchlist -> users (user_id));
 
 allow_tables_to_appear_in_same_query!(
     artists,
@@ -87,5 +97,6 @@ allow_tables_to_appear_in_same_query!(
     movies_writers,
     users,
     users_ratings,
+    users_watchlist,
     writers,
 );

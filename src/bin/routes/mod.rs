@@ -1,5 +1,6 @@
 pub mod auth;
 pub mod movie_rate;
+pub mod movies_watchlist;
 
 use popcorn::db::{self, models::MovieCompact};
 use popcorn::types::res::MovieRes;
