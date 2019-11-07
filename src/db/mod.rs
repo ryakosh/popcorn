@@ -1,8 +1,9 @@
 pub mod auth;
 pub mod models;
 pub mod movie_rate;
-pub mod schema;
+pub mod movies_favorites;
 pub mod movies_watchlist;
+pub mod schema;
 
 use crate::diesel::{self, prelude::*};
 use crate::error::Error;

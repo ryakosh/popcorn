@@ -62,6 +62,13 @@ table! {
 }
 
 table! {
+    users_favorites (user_id, movie_id) {
+        user_id -> Varchar,
+        movie_id -> Int4,
+    }
+}
+
+table! {
     users_ratings (user_id, movie_id) {
         user_id -> Varchar,
         movie_id -> Int4,
@@ -85,6 +92,8 @@ table! {
     }
 }
 
+joinable!(users_favorites -> movies (movie_id));
+joinable!(users_favorites -> users (user_id));
 joinable!(users_watchlist -> movies (movie_id));
 joinable!(users_watchlist -> users (user_id));
 
@@ -96,6 +105,7 @@ allow_tables_to_appear_in_same_query!(
     movies_directors,
     movies_writers,
     users,
+    users_favorites,
     users_ratings,
     users_watchlist,
     writers,

@@ -2,7 +2,8 @@
 
 #[macro_use]
 extern crate rocket;
-#[macro_use] extern crate rocket_contrib;
+#[macro_use]
+extern crate rocket_contrib;
 extern crate rocket_cors;
 
 use rocket::http::Method;
@@ -39,6 +40,9 @@ fn main() {
                 routes::movies_watchlist::is_movie_watchlisted,
                 routes::movies_watchlist::add_movie_to_watchlist,
                 routes::movies_watchlist::delete_movie_from_watchlist,
+                routes::movies_favorites::is_movie_favorite,
+                routes::movies_favorites::add_movie_to_favorites,
+                routes::movies_favorites::delete_movie_from_favorites,
             ],
         )
         .attach(cors)
