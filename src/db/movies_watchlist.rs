@@ -2,15 +2,13 @@ use crate::db::schema::users_watchlist;
 use crate::db::{auth::get_user_id, connect};
 use crate::diesel::{self, prelude::*};
 use crate::error::Error;
-use crate::types::req_guards::ClaimedUser;
 use std::env::var;
 
-pub fn add_movie_to_watchlist(cu: &ClaimedUser, movie_id: i32) -> Result<(), Error> {
+pub fn add_movie_to_watchlist(user_id: &str, movie_id: i32) -> Result<(), Error> {
     let conn = connect(&var("DATABASE_URL").expect("Can't find DATABASE_URL environment variable"));
 
-    let user_id = get_user_id(&cu.uname(), &conn)?;
     let result = users_watchlist::table
-        .filter(users_watchlist::user_id.eq(&user_id))
+        .filter(users_watchlist::user_id.eq(user_id))
         .filter(users_watchlist::movie_id.eq(movie_id))
         .get_result::<(String, i32)>(&conn);
 
@@ -29,12 +27,11 @@ pub fn add_movie_to_watchlist(cu: &ClaimedUser, movie_id: i32) -> Result<(), Err
     }
 }
 
-pub fn delete_movie_from_watchlist(cu: &ClaimedUser, movie_id: i32) -> Result<(), Error> {
+pub fn delete_movie_from_watchlist(user_id: &str, movie_id: i32) -> Result<(), Error> {
     let conn = connect(&var("DATABASE_URL").expect("Can't find DATABASE_URL environment variable"));
-    let user_id = get_user_id(&cu.uname(), &conn)?;
 
     let result = users_watchlist::table
-        .filter(users_watchlist::user_id.eq(&user_id))
+        .filter(users_watchlist::user_id.eq(user_id))
         .filter(users_watchlist::movie_id.eq(movie_id))
         .get_result::<(String, i32)>(&conn);
 
@@ -53,10 +50,9 @@ pub fn delete_movie_from_watchlist(cu: &ClaimedUser, movie_id: i32) -> Result<()
     }
 }
 
-pub fn is_movie_watchlisted(url_uname: &str, movie_id: i32) -> Result<bool, Error> {
+pub fn is_movie_watchlisted(user_id: &str, movie_id: i32) -> Result<bool, Error> {
     let conn = connect(&var("DATABASE_URL").expect("Can't find DATABASE_URL environment variable"));
 
-    let user_id = get_user_id(url_uname, &conn)?;
     let result = users_watchlist::table
         .filter(users_watchlist::user_id.eq(user_id))
         .filter(users_watchlist::movie_id.eq(movie_id))

@@ -60,10 +60,12 @@ pub fn signin(signin_data: &SigninData) -> Result<String, Error> {
     }
 }
 
-pub fn get_user_id(uname: &str, conn: &PgConnection) -> Result<String, Error> {
+pub fn get_user_id(uname: &str) -> Result<String, Error> {
+    let conn = connect(&var("DATABASE_URL").expect("Can't find DATABASE_URL environment variable"));
+
     users::table
         .find(uname)
         .select(users::id)
-        .get_result(conn)
+        .get_result(&conn)
         .map_err(|_| Error::UserNFound)
 }

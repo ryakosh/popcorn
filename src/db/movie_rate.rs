@@ -2,12 +2,11 @@ use crate::db::schema::{movies, users, users_ratings};
 use crate::db::{auth::get_user_id, connect, models::NewUserRating};
 use crate::diesel::{self, prelude::*, result};
 use crate::error::Error;
-use crate::types::{data::RateData, req_guards::ClaimedUser};
+use crate::types::data::RateData;
 use std::env::var;
 
-pub fn get_user_rating(movie_id: i32, cu: &ClaimedUser) -> Result<i16, Error> {
+pub fn get_user_rating(movie_id: i32, user_id: &str) -> Result<i16, Error> {
     let conn = connect(&var("DATABASE_URL").expect("Can't find DATABASE_URL environment variable"));
-    let user_id = get_user_id(&cu.uname(), &conn)?;
 
     users_ratings::table
         .filter(users_ratings::user_id.eq(user_id))
@@ -17,19 +16,14 @@ pub fn get_user_rating(movie_id: i32, cu: &ClaimedUser) -> Result<i16, Error> {
         .map_err(|_| Error::EntryDNExist)
 }
 
-pub fn create_movie_rate(
-    movie_id: i32,
-    cu: &ClaimedUser,
-    rate_data: &RateData,
-) -> Result<(), Error> {
+pub fn create_movie_rate(movie_id: i32, user_id: &str, rate_data: &RateData) -> Result<(), Error> {
     let conn = connect(&var("DATABASE_URL").expect("Can't find DATABASE_URL environment variable"));
 
-    let user_id = get_user_id(&cu.uname(), &conn)?;
     let rate_data = rate_data.validate()?;
 
     conn.transaction::<_, result::Error, _>(|| {
         let user_rating = NewUserRating {
-            user_id,
+            user_id: String::from(user_id),
             movie_id,
             user_rating: rate_data.user_rating(),
         };
@@ -57,16 +51,11 @@ pub fn create_movie_rate(
     Ok(())
 }
 
-pub fn update_movie_rate(
-    movie_id: i32,
-    cu: &ClaimedUser,
-    rate_data: &RateData,
-) -> Result<(), Error> {
+pub fn update_movie_rate(movie_id: i32, user_id: &str, rate_data: &RateData) -> Result<(), Error> {
     let conn = connect(&var("DATABASE_URL").expect("Can't find DATABASE_URL environment variable"));
 
-    let user_id = get_user_id(&cu.uname(), &conn)?;
     if let Ok(old_user_rating) = users_ratings::table
-        .filter(users_ratings::user_id.eq(&user_id))
+        .filter(users_ratings::user_id.eq(user_id))
         .filter(users_ratings::movie_id.eq(movie_id))
         .select(users_ratings::user_rating)
         .get_result::<i16>(&conn)
@@ -104,12 +93,11 @@ pub fn update_movie_rate(
     }
 }
 
-pub fn delete_movie_rate(movie_id: i32, cu: &ClaimedUser) -> Result<(), Error> {
+pub fn delete_movie_rate(movie_id: i32, user_id: &str) -> Result<(), Error> {
     let conn = connect(&var("DATABASE_URL").expect("Can't find DATABASE_URL environment variable"));
 
-    let user_id = get_user_id(&cu.uname(), &conn)?;
     if let Ok(user_rating) = users_ratings::table
-        .filter(users_ratings::user_id.eq(&user_id))
+        .filter(users_ratings::user_id.eq(user_id))
         .filter(users_ratings::movie_id.eq(movie_id))
         .select(users_ratings::user_rating)
         .get_result::<i16>(&conn)
