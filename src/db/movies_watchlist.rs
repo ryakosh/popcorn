@@ -50,7 +50,7 @@ pub fn delete_movie_from_watchlist(user_id: &str, movie_id: i32) -> Result<(), E
     }
 }
 
-pub fn is_movie_watchlisted(user_id: &str, movie_id: i32) -> Result<bool, Error> {
+pub fn is_movie_watchlisted(user_id: &str, movie_id: i32) -> bool {
     let conn = connect(&var("DATABASE_URL").expect("Can't find DATABASE_URL environment variable"));
 
     let result = users_watchlist::table
@@ -59,8 +59,8 @@ pub fn is_movie_watchlisted(user_id: &str, movie_id: i32) -> Result<bool, Error>
         .get_result::<(String, i32)>(&conn);
 
     if let Ok(_) = result {
-        Ok(true)
+        true
     } else {
-        Ok(false)
+        false
     }
 }

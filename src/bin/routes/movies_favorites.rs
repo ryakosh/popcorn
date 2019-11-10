@@ -10,14 +10,10 @@ pub fn is_movie_favorite(
 ) -> Result<Json<Response<JsonValue>>, status::BadRequest<Json<Response<String>>>> {
     match get_user_id(&uname) {
         Ok(user_id) => {
-            let result = movies_favorites::is_movie_favorite(&user_id, id);
-
-            match result {
-                Ok(is_favorite) => Ok(Json(Response::with_payload(json!({
-                    "isFavorite": is_favorite
-                })))),
-                Err(error) => Err(status::BadRequest(Some(Json(Response::with_error(error))))),
-            }
+            let is_favorite = movies_favorites::is_movie_favorite(&user_id, id);
+            Ok(Json(Response::with_payload(json!({
+                "isFavorite": is_favorite
+            }))))
         }
         Err(error) => Err(status::BadRequest(Some(Json(Response::with_error(error))))),
     }

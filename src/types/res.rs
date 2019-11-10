@@ -20,6 +20,14 @@ pub struct MovieRes {
     pub writers: Vec<String>,
     pub directors: Vec<String>,
     pub stars: Vec<String>,
+    pub u: Option<MovieResU>,
+}
+
+#[derive(Serialize)]
+pub struct MovieResU {
+    pub rating: i16,
+    pub is_watchlisted: bool,
+    pub is_favorite: bool,
 }
 
 #[derive(Serialize)]
@@ -33,6 +41,7 @@ impl MovieRes {
         writers: Vec<Writer>,
         directors: Vec<Director>,
         artists: Vec<Artist>,
+        u: Option<MovieResU>,
     ) -> MovieRes {
         MovieRes {
             movie_id: movie.movie_id,
@@ -56,6 +65,7 @@ impl MovieRes {
                 .into_iter()
                 .map(|a| format!("{} {}", a.first_name, a.last_name))
                 .collect(),
+            u,
         }
     }
 }

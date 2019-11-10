@@ -3,7 +3,8 @@ pub mod movie_rate;
 pub mod movies_favorites;
 pub mod movies_watchlist;
 
-use popcorn::db::{self, models::MovieCompact};
+use popcorn::db::{self, auth::get_user_id, models::MovieCompact};
+use popcorn::types::req_guards::ClaimedUser;
 use popcorn::types::res::MovieRes;
 use popcorn::types::{query::MoviesQuery, Response};
 use rocket::{request::Form, response::status};
@@ -22,12 +23,21 @@ pub fn movies(
 #[get("/movies/<id>")]
 pub fn movie(
     id: i32,
+    cu: Option<ClaimedUser>,
 ) -> Result<Json<Response<MovieRes>>, status::BadRequest<Json<Response<String>>>> {
-    let result = db::movie(id);
+    let user_id = if let Some(cu) = cu {
+        match get_user_id(cu.uname()) {
+            Ok(user_id) => Some(user_id),
+            Err(error) => return Err(status::BadRequest(Some(Json(Response::with_error(error))))),
+        }
+    } else {
+        None
+    };
+    let result = db::movie(id, user_id.as_ref());
 
     match result {
         Ok(result) => Ok(Json(Response::with_payload(MovieRes::new(
-            result.0, result.1, result.2, result.3,
+            result.0, result.1, result.2, result.3, result.4,
         )))),
         Err(error) => Err(status::BadRequest(Some(Json(Response::with_error(error))))),
     }

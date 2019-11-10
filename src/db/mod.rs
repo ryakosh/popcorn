@@ -8,7 +8,7 @@ pub mod schema;
 use crate::diesel::{self, prelude::*};
 use crate::error::Error;
 use crate::filter::filter_movies;
-use crate::types::query::MoviesQuery;
+use crate::types::{query::MoviesQuery, res::MovieResU};
 use models::{Artist, Director, Movie, MovieCompact, Writer};
 use schema::{
     artists, directors, movies, movies_artists, movies_directors, movies_writers, writers,
@@ -60,7 +60,19 @@ fn movies_get_query(search: &String, limit: i32, page: i32, filters: &mut String
     }
 }
 
-pub fn movie(id: i32) -> Result<(Movie, Vec<Writer>, Vec<Director>, Vec<Artist>), Error> {
+pub fn movie(
+    id: i32,
+    user_id: Option<&String>,
+) -> Result<
+    (
+        Movie,
+        Vec<Writer>,
+        Vec<Director>,
+        Vec<Artist>,
+        Option<MovieResU>,
+    ),
+    Error,
+> {
     let conn = connect(&var("DATABASE_URL").expect("Can't find DATABASE_URL environment variable"));
 
     let movie = movies::table.find(id).first(&conn);
@@ -80,8 +92,20 @@ pub fn movie(id: i32) -> Result<(Movie, Vec<Writer>, Vec<Director>, Vec<Artist>)
         .select((artists::first_name, artists::last_name))
         .load::<Artist>(&conn);
 
+    let mru = user_id.map(|user_id| {
+        let rating = movie_rate::get_user_rating(id, user_id).unwrap_or(0);
+        let is_watchlisted = movies_watchlist::is_movie_watchlisted(user_id, id);
+        let is_favorite = movies_favorites::is_movie_favorite(user_id, id);
+
+        MovieResU {
+            rating,
+            is_watchlisted,
+            is_favorite,
+        }
+    });
+
     match (movie, ws, ds, ats) {
-        (Ok(movie), Ok(ws), Ok(ds), Ok(ats)) => Ok((movie, ws, ds, ats)),
+        (Ok(movie), Ok(ws), Ok(ds), Ok(ats)) => Ok((movie, ws, ds, ats, mru)),
         _ => Err(Error::NotFound),
     }
 }

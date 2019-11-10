@@ -10,14 +10,10 @@ pub fn is_movie_watchlisted(
 ) -> Result<Json<Response<JsonValue>>, status::BadRequest<Json<Response<String>>>> {
     match get_user_id(&uname) {
         Ok(user_id) => {
-            let result = movies_watchlist::is_movie_watchlisted(&user_id, id);
-
-            match result {
-                Ok(is_watchlisted) => Ok(Json(Response::with_payload(json!({
-                    "isWatchlisted": is_watchlisted
-                })))),
-                Err(error) => Err(status::BadRequest(Some(Json(Response::with_error(error))))),
-            }
+            let is_watchlisted = movies_watchlist::is_movie_watchlisted(&user_id, id);
+            Ok(Json(Response::with_payload(json!({
+                "isWatchlisted": is_watchlisted
+            }))))
         }
         Err(error) => Err(status::BadRequest(Some(Json(Response::with_error(error))))),
     }
