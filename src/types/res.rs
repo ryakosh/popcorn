@@ -31,7 +31,7 @@ pub struct MovieResU {
 }
 
 #[derive(Serialize)]
-pub struct UserRatingRes {
+pub struct UsersMovieRatingRes {
     pub user_rating: i16,
 }
 

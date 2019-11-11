@@ -3,7 +3,7 @@ use popcorn::types::{req_guards::ClaimedUser, Response};
 use rocket::response::status;
 use rocket_contrib::json::{Json, JsonValue};
 
-#[get("/users/<uname>/movies/<id>?watchlist", format = "json")]
+#[get("/users/<uname>/movies/<id>?watchlist", format = "json", rank = 1)]
 pub fn is_movie_watchlisted(
     uname: String,
     id: i32,
@@ -19,10 +19,10 @@ pub fn is_movie_watchlisted(
     }
 }
 
-#[post("/users/<uname>/movies/<id>?watchlist", format = "json")]
+#[post("/users/<_uname>/movies/<id>?watchlist", format = "json", rank = 1)]
 pub fn add_movie_to_watchlist(
     cu: ClaimedUser,
-    uname: String,
+    _uname: String,
     id: i32,
 ) -> Result<Json<Response<String>>, status::BadRequest<Json<Response<String>>>> {
     match get_user_id(cu.uname()) {
@@ -38,10 +38,10 @@ pub fn add_movie_to_watchlist(
     }
 }
 
-#[delete("/users/<uname>/movies/<id>?watchlist", format = "json")]
+#[delete("/users/<_uname>/movies/<id>?watchlist", format = "json", rank = 1)]
 pub fn delete_movie_from_watchlist(
     cu: ClaimedUser,
-    uname: String,
+    _uname: String,
     id: i32,
 ) -> Result<Json<Response<String>>, status::BadRequest<Json<Response<String>>>> {
     match get_user_id(cu.uname()) {

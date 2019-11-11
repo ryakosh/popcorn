@@ -1,6 +1,6 @@
 pub mod auth;
-pub mod movie_rate;
 pub mod movies_favorites;
+pub mod movies_rate;
 pub mod movies_watchlist;
 
 use popcorn::db::{self, auth::get_user_id, models::MovieCompact};
@@ -10,7 +10,7 @@ use popcorn::types::{query::MoviesQuery, Response};
 use rocket::{request::Form, response::status};
 use rocket_contrib::json::Json;
 
-#[get("/movies?<movies_query..>")]
+#[get("/movies?<movies_query..>", format = "json")]
 pub fn movies(
     movies_query: Form<MoviesQuery>,
 ) -> Result<Json<Response<Vec<MovieCompact>>>, status::BadRequest<Json<Response<String>>>> {
@@ -20,7 +20,7 @@ pub fn movies(
     }
 }
 
-#[get("/movies/<id>")]
+#[get("/movies/<id>", format = "json")]
 pub fn movie(
     id: i32,
     cu: Option<ClaimedUser>,

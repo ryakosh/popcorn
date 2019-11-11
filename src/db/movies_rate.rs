@@ -5,7 +5,7 @@ use crate::error::Error;
 use crate::types::data::RateData;
 use std::env::var;
 
-pub fn get_user_rating(movie_id: i32, user_id: &str) -> Result<i16, Error> {
+pub fn get_users_movie_rating(movie_id: i32, user_id: &str) -> Result<i16, Error> {
     let conn = connect(&var("DATABASE_URL").expect("Can't find DATABASE_URL environment variable"));
 
     users_ratings::table
@@ -16,7 +16,11 @@ pub fn get_user_rating(movie_id: i32, user_id: &str) -> Result<i16, Error> {
         .map_err(|_| Error::EntryDNExist)
 }
 
-pub fn create_movie_rate(movie_id: i32, user_id: &str, rate_data: &RateData) -> Result<(), Error> {
+pub fn create_movie_rating(
+    movie_id: i32,
+    user_id: &str,
+    rate_data: &RateData,
+) -> Result<(), Error> {
     let conn = connect(&var("DATABASE_URL").expect("Can't find DATABASE_URL environment variable"));
 
     let rate_data = rate_data.validate()?;
@@ -51,7 +55,11 @@ pub fn create_movie_rate(movie_id: i32, user_id: &str, rate_data: &RateData) -> 
     Ok(())
 }
 
-pub fn update_movie_rate(movie_id: i32, user_id: &str, rate_data: &RateData) -> Result<(), Error> {
+pub fn update_movie_rating(
+    movie_id: i32,
+    user_id: &str,
+    rate_data: &RateData,
+) -> Result<(), Error> {
     let conn = connect(&var("DATABASE_URL").expect("Can't find DATABASE_URL environment variable"));
 
     if let Ok(old_user_rating) = users_ratings::table
@@ -93,7 +101,7 @@ pub fn update_movie_rate(movie_id: i32, user_id: &str, rate_data: &RateData) -> 
     }
 }
 
-pub fn delete_movie_rate(movie_id: i32, user_id: &str) -> Result<(), Error> {
+pub fn delete_movie_rating(movie_id: i32, user_id: &str) -> Result<(), Error> {
     let conn = connect(&var("DATABASE_URL").expect("Can't find DATABASE_URL environment variable"));
 
     if let Ok(user_rating) = users_ratings::table

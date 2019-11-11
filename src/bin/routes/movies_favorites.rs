@@ -19,10 +19,10 @@ pub fn is_movie_favorite(
     }
 }
 
-#[post("/users/<uname>/movies/<id>?favorite", format = "json", rank = 2)]
+#[post("/users/<_uname>/movies/<id>?favorite", format = "json", rank = 2)]
 pub fn add_movie_to_favorites(
     cu: ClaimedUser,
-    uname: String,
+    _uname: String,
     id: i32,
 ) -> Result<Json<Response<String>>, status::BadRequest<Json<Response<String>>>> {
     match get_user_id(cu.uname()) {
@@ -38,10 +38,10 @@ pub fn add_movie_to_favorites(
     }
 }
 
-#[delete("/users/<uname>/movies/<id>?favorite", format = "json", rank = 2)]
+#[delete("/users/<_uname>/movies/<id>?favorite", format = "json", rank = 2)]
 pub fn delete_movie_from_favorites(
     cu: ClaimedUser,
-    uname: String,
+    _uname: String,
     id: i32,
 ) -> Result<Json<Response<String>>, status::BadRequest<Json<Response<String>>>> {
     match get_user_id(cu.uname()) {
