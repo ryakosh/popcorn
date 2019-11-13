@@ -3,22 +3,18 @@ use popcorn::types::{data::RateData, req_guards::ClaimedUser, res::UsersMovieRat
 use rocket::response::status;
 use rocket_contrib::json::Json;
 
-#[get("/users/<_uname>/movies/<id>?rate", format = "json", rank = 3)]
+#[get("/users/<uname>/movies/<id>?rate", format = "json", rank = 3)]
 pub fn get_users_movie_rating(
-    cu: ClaimedUser,
+    uname: String,
     id: i32,
-    _uname: String,
 ) -> Result<Json<Response<UsersMovieRatingRes>>, status::BadRequest<Json<Response<String>>>> {
-    match get_user_id(cu.uname()) {
+    match get_user_id(&uname) {
         Ok(user_id) => {
-            let result = movies_rate::get_users_movie_rating(id, &user_id);
+            let user_rating = movies_rate::get_users_movie_rating(id, &user_id);
 
-            match result {
-                Ok(user_rating) => Ok(Json(Response::with_payload(UsersMovieRatingRes {
-                    user_rating,
-                }))),
-                Err(error) => Err(status::BadRequest(Some(Json(Response::with_error(error))))),
-            }
+            Ok(Json(Response::with_payload(UsersMovieRatingRes {
+                user_rating,
+            })))
         }
         Err(error) => Err(status::BadRequest(Some(Json(Response::with_error(error))))),
     }

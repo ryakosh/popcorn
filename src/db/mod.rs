@@ -93,7 +93,7 @@ pub fn movie(
         .load::<Artist>(&conn);
 
     let mru = user_id.map(|user_id| {
-        let rating = movies_rate::get_users_movie_rating(id, user_id).unwrap_or(0);
+        let rating = movies_rate::get_users_movie_rating(id, user_id);
         let is_watchlisted = movies_watchlist::is_movie_watchlisted(user_id, id);
         let is_favorite = movies_favorites::is_movie_favorite(user_id, id);
 
