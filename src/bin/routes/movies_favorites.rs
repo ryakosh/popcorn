@@ -19,7 +19,7 @@ pub fn is_movie_favorite(
     }
 }
 
-#[post("/users/<_uname>/movies/<id>?favorite", format = "json", rank = 2)]
+#[post("/users/<_uname>/movies/<id>?favorite", rank = 2)]
 pub fn add_movie_to_favorites(
     cu: ClaimedUser,
     _uname: String,
@@ -38,7 +38,7 @@ pub fn add_movie_to_favorites(
     }
 }
 
-#[delete("/users/<_uname>/movies/<id>?favorite", format = "json", rank = 2)]
+#[delete("/users/<_uname>/movies/<id>?favorite", rank = 2)]
 pub fn delete_movie_from_favorites(
     cu: ClaimedUser,
     _uname: String,

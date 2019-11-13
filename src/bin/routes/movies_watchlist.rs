@@ -19,7 +19,7 @@ pub fn is_movie_watchlisted(
     }
 }
 
-#[post("/users/<_uname>/movies/<id>?watchlist", format = "json", rank = 1)]
+#[post("/users/<_uname>/movies/<id>?watchlist", rank = 1)]
 pub fn add_movie_to_watchlist(
     cu: ClaimedUser,
     _uname: String,
@@ -38,7 +38,7 @@ pub fn add_movie_to_watchlist(
     }
 }
 
-#[delete("/users/<_uname>/movies/<id>?watchlist", format = "json", rank = 1)]
+#[delete("/users/<_uname>/movies/<id>?watchlist", rank = 1)]
 pub fn delete_movie_from_watchlist(
     cu: ClaimedUser,
     _uname: String,

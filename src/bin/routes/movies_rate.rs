@@ -70,7 +70,7 @@ pub fn update_movie_rating(
     }
 }
 
-#[delete("/users/<_uname>/movies/<id>?rate", format = "json", rank = 3)]
+#[delete("/users/<_uname>/movies/<id>?rate", rank = 3)]
 pub fn delete_movie_rating(
     cu: ClaimedUser,
     id: i32,
