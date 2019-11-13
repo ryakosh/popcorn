@@ -27,7 +27,7 @@ fn main() {
 
     rocket::ignite()
         .mount(
-            "/popcorn",
+            "/",
             routes![
                 routes::auth::signup,
                 routes::auth::signin,
