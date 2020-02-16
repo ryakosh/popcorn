@@ -15,7 +15,7 @@ pub struct Claims {
     pub exp: u64,
 }
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Debug, Default)]
 pub struct Response<T: Serialize> {
     pub payload: Option<T>,
     pub error: Option<Error>,
@@ -47,13 +47,6 @@ impl Claims {
 }
 
 impl<T: Serialize> Response<T> {
-    pub fn new() -> Self {
-        Response {
-            payload: None,
-            error: None,
-        }
-    }
-
     pub fn with_payload(payload: T) -> Self {
         Response {
             payload: Some(payload),
@@ -97,7 +90,7 @@ mod tests {
 
     #[test]
     fn response_initializers_work_correctly() {
-        let res: Response<()> = Response::new();
+        let res: Response<()> = Response::default();
         assert_eq!(res.payload, None);
         assert_eq!(res.error, None);
 

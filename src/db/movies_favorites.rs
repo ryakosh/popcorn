@@ -1,5 +1,5 @@
+use crate::db::connect;
 use crate::db::schema::users_favorites;
-use crate::db::{auth::get_user_id, connect};
 use crate::diesel::{self, prelude::*};
 use crate::error::Error;
 use std::env::var;
@@ -12,7 +12,7 @@ pub fn add_movie_to_favorites(user_id: &str, movie_id: i32) -> Result<(), Error>
         .filter(users_favorites::movie_id.eq(movie_id))
         .get_result::<(String, i32)>(&conn);
 
-    if let Ok(_) = result {
+    if result.is_ok() {
         Err(Error::EntryAlreadyExists)
     } else {
         diesel::insert_into(users_favorites::table)
@@ -35,7 +35,7 @@ pub fn delete_movie_from_favorites(user_id: &str, movie_id: i32) -> Result<(), E
         .filter(users_favorites::movie_id.eq(movie_id))
         .get_result::<(String, i32)>(&conn);
 
-    if let Ok(_) = result {
+    if result.is_ok() {
         diesel::delete(
             users_favorites::table
                 .filter(users_favorites::user_id.eq(user_id))
@@ -58,9 +58,5 @@ pub fn is_movie_favorite(user_id: &str, movie_id: i32) -> bool {
         .filter(users_favorites::movie_id.eq(movie_id))
         .get_result::<(String, i32)>(&conn);
 
-    if let Ok(_) = result {
-        true
-    } else {
-        false
-    }
+    result.is_ok()
 }

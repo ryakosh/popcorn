@@ -1,5 +1,5 @@
-use crate::db::schema::{movies, users, users_ratings};
-use crate::db::{auth::get_user_id, connect, models::NewUserRating};
+use crate::db::schema::{movies, users_ratings};
+use crate::db::{connect, models::NewUserRating};
 use crate::diesel::{self, prelude::*, result};
 use crate::error::Error;
 use crate::types::data::RateData;
@@ -23,11 +23,12 @@ pub fn create_movie_rating(
 ) -> Result<(), Error> {
     let conn = connect(&var("DATABASE_URL").expect("Can't find DATABASE_URL environment variable"));
 
-    if let Ok(_) = users_ratings::table
+    if users_ratings::table
         .filter(users_ratings::user_id.eq(user_id))
         .filter(users_ratings::movie_id.eq(movie_id))
         .select(users_ratings::user_rating)
         .get_result::<i16>(&conn)
+        .is_ok()
     {
         Err(Error::EntryAlreadyExists)
     } else {

@@ -14,7 +14,7 @@ pub fn signup(
     let result = auth::signup(&signup_data.0);
 
     match result {
-        Ok(()) => Ok(Json(Response::new())),
+        Ok(()) => Ok(Json(Response::default())),
         Err(error) => Err(status::BadRequest(Some(Json(Response::with_error(error))))),
     }
 }

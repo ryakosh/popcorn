@@ -12,6 +12,7 @@ use rocket_cors::AllowedOrigins;
 mod routes;
 
 fn main() {
+    #[cfg(not(debug_assertions))]
     let (allowed_origins, _) = AllowedOrigins::some(&["https://popcrn.ir"]);
     #[cfg(debug_assertions)]
     let allowed_origins = AllowedOrigins::all();

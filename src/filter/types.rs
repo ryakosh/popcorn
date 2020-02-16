@@ -1,4 +1,3 @@
-use crate::consts::{RGX_ALPHA, RGX_NUM};
 use std::fmt;
 
 #[derive(Debug)]
@@ -10,16 +9,16 @@ pub enum MoviesFilters<'m> {
 
 impl<'m> MoviesFilters<'m> {
     pub fn new(filter: &'m str) -> Self {
-        let filter = filter.split(":").collect::<Vec<&'m str>>();
+        let filter = filter.split(':').collect::<Vec<&'m str>>();
         match filter[0] {
             "release_country" => MoviesFilters::Alpha(filter[0], filter[1].to_uppercase()),
             "genres" | "languages" => {
-                let alphas: Vec<&'m str> = filter[1].split("|").collect();
+                let alphas: Vec<&'m str> = filter[1].split('|').collect();
 
                 MoviesFilters::Alphas(filter[0], alphas)
             }
             "directors" | "writers" | "stars" => {
-                let nums: Vec<&'m str> = filter[1].split("|").collect();
+                let nums: Vec<&'m str> = filter[1].split('|').collect();
 
                 MoviesFilters::Nums(filter[0], nums)
             }

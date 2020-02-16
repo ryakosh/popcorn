@@ -16,7 +16,8 @@ use schema::{
 use std::env::var;
 
 fn connect(conn_str: &str) -> PgConnection {
-    PgConnection::establish(conn_str).expect(&format!("Error connecting to: {}", conn_str))
+    PgConnection::establish(conn_str)
+        .unwrap_or_else(|_| panic!("Error connecting to: {}", conn_str))
 }
 
 pub fn movies(movies_query: &MoviesQuery) -> Result<Vec<MovieCompact>, Error> {
@@ -33,7 +34,7 @@ pub fn movies(movies_query: &MoviesQuery) -> Result<Vec<MovieCompact>, Error> {
     .expect("Error executing query"))
 }
 
-fn movies_get_query(search: &String, limit: i32, page: i32, filters: &mut String) -> String {
+fn movies_get_query(search: &str, limit: i32, page: i32, filters: &mut String) -> String {
     if !search.is_empty() {
         if !filters.is_empty() {
             filters.insert_str(0, "AND ");

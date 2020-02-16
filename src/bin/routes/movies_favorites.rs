@@ -30,7 +30,7 @@ pub fn add_movie_to_favorites(
             let result = movies_favorites::add_movie_to_favorites(&user_id, id);
 
             match result {
-                Ok(()) => Ok(Json(Response::new())),
+                Ok(()) => Ok(Json(Response::default())),
                 Err(error) => Err(status::BadRequest(Some(Json(Response::with_error(error))))),
             }
         }
@@ -49,7 +49,7 @@ pub fn delete_movie_from_favorites(
             let result = movies_favorites::delete_movie_from_favorites(&user_id, id);
 
             match result {
-                Ok(()) => Ok(Json(Response::new())),
+                Ok(()) => Ok(Json(Response::default())),
                 Err(error) => Err(status::BadRequest(Some(Json(Response::with_error(error))))),
             }
         }

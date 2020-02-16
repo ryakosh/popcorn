@@ -1,6 +1,5 @@
 use crate::consts::{RGX_ALPHA, RGX_NUM};
 use crate::error::Error;
-use crate::filter::types::MoviesFilters;
 
 #[derive(FromForm)]
 pub struct MoviesQuery {
@@ -56,8 +55,8 @@ impl MoviesQuery {
     }
     fn validate_filters(&self) -> Result<(), Error> {
         if let Some(filters) = self.filters.as_ref() {
-            for filter in filters.split(",") {
-                let filter = filter.split(":").collect::<Vec<&str>>();
+            for filter in filters.split(',') {
+                let filter = filter.split(':').collect::<Vec<&str>>();
 
                 match filter[0] {
                     "release_country" => {
@@ -66,14 +65,14 @@ impl MoviesQuery {
                         }
                     }
                     "genres" | "languages" => {
-                        let alphas: Vec<&str> = filter[1].split("|").collect();
+                        let alphas: Vec<&str> = filter[1].split('|').collect();
 
                         if !alphas.iter().all(|alpha| RGX_ALPHA.is_match(alpha)) {
                             return Err(Error::FilterInvalid);
                         }
                     }
                     "directors" | "writers" | "stars" => {
-                        let nums: Vec<&str> = filter[1].split("|").collect();
+                        let nums: Vec<&str> = filter[1].split('|').collect();
 
                         if !nums.iter().all(|mum| RGX_NUM.is_match(mum)) {
                             return Err(Error::FilterInvalid);
@@ -84,9 +83,9 @@ impl MoviesQuery {
                     }
                 }
             }
-            return Ok(());
+            Ok(())
         } else {
-            return Ok(());
+            Ok(())
         }
     }
 }
@@ -103,8 +102,8 @@ mod tests {
         let test_filters = Some(String::from("release_country:US,genres:Action|Advanture"));
         let query = MoviesQuery {
             search: test_search.clone(),
-            limit: test_limit.clone(),
-            page: test_page.clone(),
+            limit: test_limit,
+            page: test_page,
             filters: test_filters.clone(),
         };
 
@@ -122,8 +121,8 @@ mod tests {
         let test_filters = Some(String::from("release_country:US,genres:Action|Advanture"));
         let query = MoviesQuery {
             search: test_search.clone(),
-            limit: test_limit.clone(),
-            page: test_page.clone(),
+            limit: test_limit,
+            page: test_page,
             filters: test_filters.clone(),
         };
 
@@ -133,10 +132,10 @@ mod tests {
 
         let test_limit = Some(30);
         let query = MoviesQuery {
-            search: test_search.clone(),
-            limit: test_limit.clone(),
-            page: test_page.clone(),
-            filters: test_filters.clone(),
+            search: test_search,
+            limit: test_limit,
+            page: test_page,
+            filters: test_filters,
         };
 
         match query.validate() {

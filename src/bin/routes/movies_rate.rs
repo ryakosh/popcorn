@@ -37,7 +37,7 @@ pub fn create_movie_rating(
             let result = movies_rate::create_movie_rating(id, &user_id, &rate_data);
 
             match result {
-                Ok(()) => Ok(Json(Response::new())),
+                Ok(()) => Ok(Json(Response::default())),
                 Err(error) => Err(status::BadRequest(Some(Json(Response::with_error(error))))),
             }
         }
@@ -62,7 +62,7 @@ pub fn update_movie_rating(
             let result = movies_rate::update_movie_rating(id, &user_id, &rate_data);
 
             match result {
-                Ok(()) => Ok(Json(Response::new())),
+                Ok(()) => Ok(Json(Response::default())),
                 Err(error) => Err(status::BadRequest(Some(Json(Response::with_error(error))))),
             }
         }
@@ -81,7 +81,7 @@ pub fn delete_movie_rating(
             let result = movies_rate::delete_movie_rating(id, &user_id);
 
             match result {
-                Ok(()) => Ok(Json(Response::new())),
+                Ok(()) => Ok(Json(Response::default())),
                 Err(error) => Err(status::BadRequest(Some(Json(Response::with_error(error))))),
             }
         }
