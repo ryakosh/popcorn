@@ -1,4 +1,4 @@
-use super::{connect, models::User, schema::users};
+use super::{Conn, models::User, schema::users};
 use crate::argon2;
 use crate::config::{self, CONFIG};
 use crate::diesel::{self, prelude::*};
@@ -9,15 +9,13 @@ use crate::types::{
     data::{SigninData, SignupData},
     Claims,
 };
-use std::env::var;
 
-pub fn signup(signup_data: &SignupData) -> Result<(), Error> {
-    let conn = connect(&var("DATABASE_URL").expect("Can't find DATABASE_URL environment variable"));
+pub fn signup(signup_data: &SignupData, conn: &Conn) -> Result<(), Error> {
     let signup_data = signup_data.validate()?;
 
     let user: Result<User, _> = users::table
         .find(signup_data.uname().to_lowercase())
-        .first(&conn);
+        .first(conn);
 
     if user.is_ok() {
         Err(Error::UnameTaken)
@@ -30,20 +28,19 @@ pub fn signup(signup_data: &SignupData) -> Result<(), Error> {
 
         diesel::insert_into(users::table)
             .values(&new_user)
-            .execute(&conn)
+            .execute(conn)
             .expect("Error creating a user");
 
         Ok(())
     }
 }
 
-pub fn signin(signin_data: &SigninData) -> Result<String, Error> {
-    let conn = connect(&var("DATABASE_URL").expect("Can't find DATABASE_URL environment variable"));
+pub fn signin(signin_data: &SigninData, conn: &Conn) -> Result<String, Error> {
     let signin_data = signin_data.validate()?;
 
     let result: Result<User, _> = users::table
         .find(signin_data.uname().to_lowercase())
-        .first(&conn);
+        .first(conn);
 
     if let Ok(user) = result {
         if verify_pwd(signin_data.pwd(), &user.pwd) {
@@ -61,13 +58,11 @@ pub fn signin(signin_data: &SigninData) -> Result<String, Error> {
     }
 }
 
-pub fn get_user_id(uname: &str) -> Result<String, Error> {
-    let conn = connect(&var("DATABASE_URL").expect("Can't find DATABASE_URL environment variable"));
-
+pub fn get_user_id(uname: &str, conn: &Conn) -> Result<String, Error> {
     users::table
         .find(uname)
         .select(users::id)
-        .get_result(&conn)
+        .get_result(conn)
         .map_err(|_| Error::UserNFound)
 }
 

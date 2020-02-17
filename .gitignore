@@ -2,4 +2,5 @@
 **/*.rs.bk
 Cargo.lock
 popcorn.toml
+Rocket.toml
 .swp

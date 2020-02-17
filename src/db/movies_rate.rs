@@ -1,18 +1,16 @@
+use super::Conn;
 use crate::db::schema::{movies, users_ratings};
-use crate::db::{connect, models::NewUserRating};
+use crate::db::{models::NewUserRating};
 use crate::diesel::{self, prelude::*, result};
 use crate::error::Error;
 use crate::types::data::RateData;
-use std::env::var;
 
-pub fn get_users_movie_rating(movie_id: i32, user_id: &str) -> i16 {
-    let conn = connect(&var("DATABASE_URL").expect("Can't find DATABASE_URL environment variable"));
-
+pub fn get_users_movie_rating(movie_id: i32, user_id: &str, conn: &Conn) -> i16 {
     users_ratings::table
         .filter(users_ratings::user_id.eq(user_id))
         .filter(users_ratings::movie_id.eq(movie_id))
         .select(users_ratings::user_rating)
-        .get_result(&conn)
+        .get_result(conn)
         .unwrap_or(0)
 }
 
@@ -20,14 +18,13 @@ pub fn create_movie_rating(
     movie_id: i32,
     user_id: &str,
     rate_data: &RateData,
+    conn: &Conn,
 ) -> Result<(), Error> {
-    let conn = connect(&var("DATABASE_URL").expect("Can't find DATABASE_URL environment variable"));
-
     if users_ratings::table
         .filter(users_ratings::user_id.eq(user_id))
         .filter(users_ratings::movie_id.eq(movie_id))
         .select(users_ratings::user_rating)
-        .get_result::<i16>(&conn)
+        .get_result::<i16>(conn)
         .is_ok()
     {
         Err(Error::EntryAlreadyExists)
@@ -43,19 +40,19 @@ pub fn create_movie_rating(
             let rc: (f32, i32) = movies::table // Rating and rating_count
                 .find(movie_id)
                 .select((movies::rating, movies::rating_count))
-                .first(&conn)?;
+                .first(conn)?;
             let new_rating =
                 ((rc.0 * rc.1 as f32) + rate_data.user_rating() as f32) / (rc.1 + 1) as f32;
             diesel::insert_into(users_ratings::table)
                 .values(&user_rating)
-                .execute(&conn)?;
+                .execute(conn)?;
 
             diesel::update(movies::table.find(movie_id))
                 .set((
                     movies::rating.eq(new_rating),
                     movies::rating_count.eq(rc.1 + 1),
                 ))
-                .execute(&conn)?;
+                .execute(conn)?;
 
             Ok(())
         })
@@ -69,14 +66,13 @@ pub fn update_movie_rating(
     movie_id: i32,
     user_id: &str,
     rate_data: &RateData,
+    conn: &Conn,
 ) -> Result<(), Error> {
-    let conn = connect(&var("DATABASE_URL").expect("Can't find DATABASE_URL environment variable"));
-
     if let Ok(old_user_rating) = users_ratings::table
         .filter(users_ratings::user_id.eq(user_id))
         .filter(users_ratings::movie_id.eq(movie_id))
         .select(users_ratings::user_rating)
-        .get_result::<i16>(&conn)
+        .get_result::<i16>(conn)
     {
         let rate_data = rate_data.validate()?;
 
@@ -84,7 +80,7 @@ pub fn update_movie_rating(
             let rc: (f32, i32) = movies::table // Rating and rating_count
                 .find(movie_id)
                 .select((movies::rating, movies::rating_count))
-                .first(&conn)?;
+                .first(conn)?;
             let new_rating = ((rc.0 * rc.1 as f32)
                 + (rate_data.user_rating() - old_user_rating) as f32)
                 / rc.1 as f32;
@@ -95,11 +91,11 @@ pub fn update_movie_rating(
                     .filter(users_ratings::movie_id.eq(movie_id)),
             )
             .set(users_ratings::user_rating.eq(rate_data.user_rating()))
-            .execute(&conn)?;
+            .execute(conn)?;
 
             diesel::update(movies::table.find(movie_id))
                 .set(movies::rating.eq(new_rating))
-                .execute(&conn)?;
+                .execute(conn)?;
 
             Ok(())
         })
@@ -111,20 +107,18 @@ pub fn update_movie_rating(
     }
 }
 
-pub fn delete_movie_rating(movie_id: i32, user_id: &str) -> Result<(), Error> {
-    let conn = connect(&var("DATABASE_URL").expect("Can't find DATABASE_URL environment variable"));
-
+pub fn delete_movie_rating(movie_id: i32, user_id: &str, conn: &Conn) -> Result<(), Error> {
     if let Ok(user_rating) = users_ratings::table
         .filter(users_ratings::user_id.eq(user_id))
         .filter(users_ratings::movie_id.eq(movie_id))
         .select(users_ratings::user_rating)
-        .get_result::<i16>(&conn)
+        .get_result::<i16>(conn)
     {
         conn.transaction::<_, result::Error, _>(|| {
             let rc: (f32, i32) = movies::table // Rating and rating_count
                 .find(movie_id)
                 .select((movies::rating, movies::rating_count))
-                .first(&conn)?;
+                .first(conn)?;
             let new_rating = ((rc.0 * rc.1 as f32) - user_rating as f32) / (rc.1 - 1) as f32;
 
             diesel::delete(
@@ -132,14 +126,14 @@ pub fn delete_movie_rating(movie_id: i32, user_id: &str) -> Result<(), Error> {
                     .filter(users_ratings::user_id.eq(user_id))
                     .filter(users_ratings::movie_id.eq(movie_id)),
             )
-            .execute(&conn)?;
+            .execute(conn)?;
 
             diesel::update(movies::table.find(movie_id))
                 .set((
                     movies::rating.eq(new_rating),
                     movies::rating_count.eq(rc.1 - 1),
                 ))
-                .execute(&conn)?;
+                .execute(conn)?;
 
             Ok(())
         })

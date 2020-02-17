@@ -10,6 +10,7 @@ use rocket::http::Method;
 use rocket_cors::AllowedOrigins;
 
 mod routes;
+mod db_conn;
 
 fn main() {
     #[cfg(not(debug_assertions))]
@@ -47,5 +48,6 @@ fn main() {
             ],
         )
         .attach(cors)
+        .attach(db_conn::PopcornConn::fairing())
         .launch();
 }

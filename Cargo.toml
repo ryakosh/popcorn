@@ -21,4 +21,4 @@ getrandom = "0.1.14"
 [dependencies.rocket_contrib]
 version = "0.4.0"
 default-features = false
-features = ["json"]
+features = ["json", "diesel_postgres_pool"]

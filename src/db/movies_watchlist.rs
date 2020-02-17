@@ -1,16 +1,13 @@
-use crate::db::connect;
+use super::Conn;
 use crate::db::schema::users_watchlist;
 use crate::diesel::{self, prelude::*};
 use crate::error::Error;
-use std::env::var;
 
-pub fn add_movie_to_watchlist(user_id: &str, movie_id: i32) -> Result<(), Error> {
-    let conn = connect(&var("DATABASE_URL").expect("Can't find DATABASE_URL environment variable"));
-
+pub fn add_movie_to_watchlist(user_id: &str, movie_id: i32, conn: &Conn) -> Result<(), Error> {
     let result = users_watchlist::table
         .filter(users_watchlist::user_id.eq(user_id))
         .filter(users_watchlist::movie_id.eq(movie_id))
-        .get_result::<(String, i32)>(&conn);
+        .get_result::<(String, i32)>(conn);
 
     if result.is_ok() {
         Err(Error::EntryAlreadyExists)
@@ -20,20 +17,18 @@ pub fn add_movie_to_watchlist(user_id: &str, movie_id: i32) -> Result<(), Error>
                 users_watchlist::user_id.eq(user_id),
                 users_watchlist::movie_id.eq(movie_id),
             ))
-            .execute(&conn)
+            .execute(conn)
             .expect("Error executing query");
 
         Ok(())
     }
 }
 
-pub fn delete_movie_from_watchlist(user_id: &str, movie_id: i32) -> Result<(), Error> {
-    let conn = connect(&var("DATABASE_URL").expect("Can't find DATABASE_URL environment variable"));
-
+pub fn delete_movie_from_watchlist(user_id: &str, movie_id: i32, conn: &Conn) -> Result<(), Error> {
     let result = users_watchlist::table
         .filter(users_watchlist::user_id.eq(user_id))
         .filter(users_watchlist::movie_id.eq(movie_id))
-        .get_result::<(String, i32)>(&conn);
+        .get_result::<(String, i32)>(conn);
 
     if result.is_ok() {
         diesel::delete(
@@ -41,7 +36,7 @@ pub fn delete_movie_from_watchlist(user_id: &str, movie_id: i32) -> Result<(), E
                 .filter(users_watchlist::user_id.eq(user_id))
                 .filter(users_watchlist::movie_id.eq(movie_id)),
         )
-        .execute(&conn)
+        .execute(conn)
         .expect("Error executing query");
 
         Ok(())
@@ -50,13 +45,11 @@ pub fn delete_movie_from_watchlist(user_id: &str, movie_id: i32) -> Result<(), E
     }
 }
 
-pub fn is_movie_watchlisted(user_id: &str, movie_id: i32) -> bool {
-    let conn = connect(&var("DATABASE_URL").expect("Can't find DATABASE_URL environment variable"));
-
+pub fn is_movie_watchlisted(user_id: &str, movie_id: i32, conn: &Conn) -> bool {
     let result = users_watchlist::table
         .filter(users_watchlist::user_id.eq(user_id))
         .filter(users_watchlist::movie_id.eq(movie_id))
-        .get_result::<(String, i32)>(&conn);
+        .get_result::<(String, i32)>(conn);
 
     result.is_ok()
 }
